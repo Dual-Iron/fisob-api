@@ -3,15 +3,15 @@
 /// <summary>
 /// Provides methods to define physical objects' properties.
 /// </summary>
-public class FisobBehavior
+public class FisobProperties
 {
     /// <summary>
     /// The default behavior for a fisob. Does nothing unique.
     /// </summary>
-    public static FisobBehavior Default { get; } = new();
+    public static FisobProperties Default { get; } = new();
 
     /// <summary>
-    /// Modifies how highly a scavenger values an item as a collectible.
+    /// Modifies how highly a scavenger values an item as a collectable.
     /// </summary>
     /// <param name="scavenger">The scavenger.</param>
     /// <param name="score">The score.</param>

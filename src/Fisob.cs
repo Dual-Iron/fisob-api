@@ -34,18 +34,26 @@ public abstract class Fisob
 
     /// <summary>
     /// This fisob's enum value.
-    /// </summary>
-    public AbstractPhysicalObject.AbstractObjectType Type { get; internal set; }
+    /// </summary> 
+    /// <remarks>This field is -1 until added to a <see cref="FisobRegistry"/>.</remarks>
+    public AbstractPhysicalObject.AbstractObjectType Type { get; internal set; } = (AbstractPhysicalObject.AbstractObjectType)(-1);
 
     /// <summary>
     /// Gets an abstract physical object from saved data.
     /// </summary>
-    /// <returns>A newly created abstract physical object, or null.</returns>
+    /// <returns>A newly created abstract physical object, or <see langword="null"/>.</returns>
     public abstract AbstractPhysicalObject? Parse(World world, EntitySaveData saveData);
 
     /// <summary>
-    /// Gets a behavior object for a specified physical object.
+    /// Gets saved data from an abstract physical object.
+    /// </summary>
+    /// <returns>A newly created <see cref="EntitySaveData"/> instance. See the <see cref="EntitySaveData.CreateFrom(AbstractPhysicalObject, string)"/> method.</returns>
+    public abstract EntitySaveData Save(World world, AbstractPhysicalObject apo);
+
+    /// <summary>
+    /// Gets an object representing the properties of a physical object.
     /// </summary>
     /// <returns>A newly created behavior object.</returns>
-    public virtual FisobBehavior GetBehavior(PhysicalObject forObject) => FisobBehavior.Default;
+    /// <remarks>Do not return <see langword="null"/> from this method. Return <see cref="FisobProperties.Default"/> instead.</remarks>
+    public virtual FisobProperties GetBehavior(PhysicalObject forObject) => FisobProperties.Default;
 }

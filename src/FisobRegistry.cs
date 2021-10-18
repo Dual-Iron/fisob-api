@@ -7,6 +7,7 @@ namespace Fisobs;
 /// <summary>
 /// Provides methods to register physical object handlers (fisobs) through the <see cref="Fisob"/> type.
 /// </summary>
+/// <remarks>Users should create one instance of this class and pass it around. After creating a new instance, <see cref="ApplyHooks"/> should be called.</remarks>
 public sealed class FisobRegistry
 {
     private readonly Dictionary<string, Fisob> fisobsByID = new(StringComparer.OrdinalIgnoreCase);
@@ -14,6 +15,7 @@ public sealed class FisobRegistry
     /// <summary>
     /// Creates a new fisob registry from the provided set of <see cref="Fisob"/> instances.
     /// </summary>
+    /// <exception cref="ArgumentException">Thrown when the ID of a fisob is already in use.</exception>
     public FisobRegistry(IEnumerable<Fisob> fisobs)
     {
         var t = typeof(ObjType);
@@ -40,11 +42,49 @@ public sealed class FisobRegistry
     }
 
     /// <summary>
+    /// Gets a fisob from its ID.
+    /// </summary>
+    /// <returns>The fisob whose ID is <paramref name="id"/>.</returns>
+    /// <exception cref="KeyNotFoundException"/>
+    public Fisob this[string id] => fisobsByID[id];
+
+    /// <summary>
+    /// Gets a fisob from an object type. This is sugar for <see cref="this[string]"/>.
+    /// </summary>
+    /// <returns>The fisob whose type is <paramref name="type"/>.</returns>
+    /// <exception cref="KeyNotFoundException"/>
+    public Fisob this[ObjType type] => fisobsByID[type.ToString()];
+
+    /// <summary>
+    /// Gets a fisob from its ID.
+    /// </summary>
+    /// <param name="id">The ID of the fisob.</param>
+    /// <param name="fisob">If it exists, the fisob; otherwise, <see langword="null"/>.</param>
+    /// <returns>If the fisob exists, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
+    public bool TryGet(string id, out Fisob fisob)
+    {
+        return fisobsByID.TryGetValue(id, out fisob);
+    }
+
+    /// <summary>
+    /// Gets a fisob from an object type.
+    /// </summary>
+    /// <param name="type">The type of the fisob.</param>
+    /// <param name="fisob">If it exists, the fisob; otherwise, <see langword="null"/>.</param>
+    /// <returns>If the fisob exists, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
+    public bool TryGet(ObjType type, out Fisob fisob)
+    {
+        return fisobsByID.TryGetValue(type.ToString(), out fisob);
+    }
+
+    /// <summary>
     /// Applies hooks that enable fisob behavior.
     /// </summary>
     public void ApplyHooks()
     {
-        // TODO add hooks for FisobBehavior
+        On.Player.IsObjectThrowable += Player_IsObjectThrowable;
+        On.Player.Grabability += Player_Grabability;
+        On.ScavengerAI.CollectScore_PhysicalObject_bool += ScavengerAI_CollectScore_PhysicalObject_bool;
         On.SaveState.AbstractPhysicalObjectFromString += SaveState_AbstractPhysicalObjectFromString;
     }
 
@@ -53,20 +93,47 @@ public sealed class FisobRegistry
     /// </summary>
     public void UndoHooks()
     {
+        On.Player.IsObjectThrowable -= Player_IsObjectThrowable;
+        On.Player.Grabability -= Player_Grabability;
+        On.ScavengerAI.CollectScore_PhysicalObject_bool -= ScavengerAI_CollectScore_PhysicalObject_bool;
         On.SaveState.AbstractPhysicalObjectFromString -= SaveState_AbstractPhysicalObjectFromString;
     }
 
-    /// <summary>
-    /// Gets a fisob from its ID.
-    /// </summary>
-    /// <returns>The fisob whose ID is <paramref name="id"/>.</returns>
-    public Fisob this[string id] => fisobsByID[id];
+    private bool Player_IsObjectThrowable(On.Player.orig_IsObjectThrowable orig, Player self, PhysicalObject obj)
+    {
+        bool ret = orig(self, obj);
 
-    /// <summary>
-    /// Gets a fisob from an object type. This is sugar for <see cref="this[string]"/>.
-    /// </summary>
-    /// <returns>The fisob whose type is <paramref name="type"/>.</returns>
-    public Fisob this[ObjType type] => fisobsByID[type.ToString()];
+        if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
+            fisob.GetBehavior(obj).CanThrow(self, ref ret);
+        }
+
+        return ret;
+    }
+
+    private int Player_Grabability(On.Player.orig_Grabability orig, Player self, PhysicalObject obj)
+    {
+        Player.ObjectGrabability ret = (Player.ObjectGrabability)orig(self, obj);
+
+        if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
+            fisob.GetBehavior(obj).GetGrabability(self, ref ret);
+        }
+
+        return (int)ret;
+    }
+
+    private int ScavengerAI_CollectScore_PhysicalObject_bool(On.ScavengerAI.orig_CollectScore_PhysicalObject_bool orig, ScavengerAI self, PhysicalObject obj, bool weaponFiltered)
+    {
+        int ret = orig(self, obj, weaponFiltered);
+
+        if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
+            if (weaponFiltered && self.NeedAWeapon)
+                fisob.GetBehavior(obj).GetScavengerWeaponScore(self.scavenger, ref ret);
+            else
+                fisob.GetBehavior(obj).GetScavengerCollectScore(self.scavenger, ref ret);
+        }
+
+        return ret;
+    }
 
     private AbstractPhysicalObject? SaveState_AbstractPhysicalObjectFromString(On.SaveState.orig_AbstractPhysicalObjectFromString orig, World world, string objString)
     {

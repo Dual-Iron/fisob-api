@@ -25,33 +25,43 @@ public struct EntitySaveData
     /// <summary>
     /// Any extra data associated with the object. This can be an empty string, but not null.
     /// </summary>
-    public readonly string ExtraData;
+    public readonly string CustomData;
 
-    internal EntitySaveData(ObjType objectType, EntityID id, WorldCoordinate pos, string extraData)
+    internal EntitySaveData(ObjType objectType, EntityID id, WorldCoordinate pos, string customData)
     {
         ObjectType = objectType;
         ID = id;
         Pos = pos;
-        ExtraData = extraData;
+        CustomData = customData;
     }
 
     /// <summary>
     /// Creates an instance of the <see cref="EntitySaveData"/> struct.
     /// </summary>
-    /// <param name="o">The abstract physical object to get basic data from.</param>
-    /// <param name="extraData">Extra data associated with the physical object. This data should never contain &lt; characters.</param>
+    /// <param name="apo">The abstract physical object to get basic data from.</param>
+    /// <param name="customData">Extra data associated with the physical object. This data should never contain &lt; characters.</param>
     /// <returns>A new instance of <see cref="EntitySaveData"/>.</returns>
-    /// <exception cref="ArgumentException"/>
-    public static EntitySaveData CreateFrom(AbstractPhysicalObject o, string extraData)
+    /// <exception cref="ArgumentException">Thrown when <paramref name="customData"/> contains &lt; characters.</exception>
+    public static EntitySaveData CreateFrom(AbstractPhysicalObject apo, string customData)
     {
-        if (extraData is null) {
-            throw new ArgumentNullException(nameof(extraData));
+        if (customData is null) {
+            throw new ArgumentNullException(nameof(customData));
         }
 
-        if (extraData.Contains('<')) {
+        if (customData.Contains('<')) {
             throw new ArgumentException("Custom data cannot contain < characters.");
         }
 
-        return new(o.type, o.ID, o.pos, extraData);
+        return new(apo.type, apo.ID, apo.pos, customData);
+    }
+
+    /// <summary>
+    /// Gets this entity's saved data as a string.
+    /// </summary>
+    /// <returns>A string representation of this data.</returns>
+    public override string ToString()
+    {
+        string customDataStr = string.IsNullOrEmpty(CustomData) ? "" : $"<oA>{CustomData}";
+        return $"{ID}<oA>{ObjectType}<oA>{Pos.room}.{Pos.x}.{Pos.y}.{Pos.abstractNode}{customDataStr}";
     }
 }
