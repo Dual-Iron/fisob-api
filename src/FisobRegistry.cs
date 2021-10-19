@@ -26,10 +26,6 @@ namespace Fisobs
 
             // Verify fisobs first
             foreach (Fisob fisob in fisobs) {
-                if (fisob.type != null) {
-                    throw new InvalidOperationException($"The fisob \"{fisob.ID}\" is already in a registry.");
-                }
-
                 if (fisobsByID.ContainsKey(fisob.ID)) {
                     throw new ArgumentException($"A fisob with the ID \"{fisob.ID}\" is already in this registry.");
                 }
