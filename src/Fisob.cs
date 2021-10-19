@@ -16,7 +16,7 @@ namespace Fisobs
         /// <summary>
         /// Initializes a new instance of the <see cref="Fisob"/> class.
         /// </summary>
-        /// <param name="id">This fisob's unique identifier. This must consist of characters a-z and _ only.</param>
+        /// <param name="id">This fisob's case-insensitive unique identifier. This must consist of characters a-z and _ only.</param>
         protected Fisob(string id)
         {
             if (string.IsNullOrEmpty(id)) {
@@ -30,6 +30,8 @@ namespace Fisobs
             ID = id;
         }
 
+        internal AbstractPhysicalObject.AbstractObjectType? type;
+
         /// <summary>
         /// This fisob's unique identifier.
         /// </summary>
@@ -38,8 +40,7 @@ namespace Fisobs
         /// <summary>
         /// This fisob's enum value.
         /// </summary> 
-        /// <remarks>This field is -1 until added to a <see cref="FisobRegistry"/>.</remarks>
-        public AbstractPhysicalObject.AbstractObjectType Type { get; internal set; } = (AbstractPhysicalObject.AbstractObjectType)(-1);
+        public AbstractPhysicalObject.AbstractObjectType Type => type ?? throw new InvalidOperationException($"The fisob \"{ID}\" hasn't been added to a registry yet.");
 
         /// <summary>
         /// Gets an APO from saved data.

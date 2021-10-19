@@ -18,20 +18,29 @@ namespace Fisobs
         /// <summary>
         /// Creates a new fisob registry from the provided set of <see cref="Fisob"/> instances.
         /// </summary>
-        /// <exception cref="ArgumentException">Thrown when the ID of a fisob is already in use.</exception>
+        /// <exception cref="ArgumentException">Thrown when a fisob can't be added to this registry.</exception>
         public FisobRegistry(IEnumerable<Fisob> fisobs)
         {
             var t = typeof(ObjType);
+            var names = Enum.GetNames(t);
 
+            // Verify fisobs first
             foreach (Fisob fisob in fisobs) {
-                if (Enum.GetNames(t).Contains(fisob.ID, StringComparer.OrdinalIgnoreCase)) {
-                    throw new ArgumentException($"A name in AbstractPhysicalObject.AbstractObjectType synonymous with \"{fisob.ID}\" already exists.");
+                if (fisob.type != null) {
+                    throw new InvalidOperationException($"The fisob \"{fisob.ID}\" is already in a registry.");
                 }
 
                 if (fisobsByID.ContainsKey(fisob.ID)) {
-                    throw new ArgumentException($"A fisob with the ID \"{fisob.ID}\" already exists.");
+                    throw new ArgumentException($"A fisob with the ID \"{fisob.ID}\" is already in this registry.");
                 }
 
+                if (names.Contains(fisob.ID, StringComparer.OrdinalIgnoreCase)) {
+                    throw new ArgumentException($"The ID \"{fisob.ID}\" is synonymous with a name in AbstractPhysicalObject.AbstractObjectType.");
+                }
+            }
+
+            // Add them to enums
+            foreach (Fisob fisob in fisobs) {
                 fisobsByID[fisob.ID] = fisob;
 
                 EnumExtender.AddDeclaration(t, fisob.ID);
@@ -39,8 +48,9 @@ namespace Fisobs
 
             EnumExtender.ExtendEnumsAgain();
 
+            // Assign their types
             foreach (Fisob fisob in fisobs) {
-                fisob.Type = (ObjType)Enum.Parse(t, fisob.ID, false);
+                fisob.type = (ObjType)Enum.Parse(t, fisob.ID, true);
             }
         }
 
@@ -161,7 +171,12 @@ namespace Fisobs
 
                 string extraData = objString.Substring(array[0].Length + array[1].Length + array[2].Length);
 
-                return o.Parse(world, new(o.Type, id, coord, extraData));
+                try {
+                    return o.Parse(world, new(o.Type, id, coord, extraData));
+                } catch (Exception e) {
+                    Debug.LogError(e);
+                    return null;
+                }
             }
 
             return orig(world, objString);
