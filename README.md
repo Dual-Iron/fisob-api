@@ -18,7 +18,9 @@ You're good to go!
     
 ```cs
 class CustomFisob : Fisob {
-    public CustomFisob : base("custom_fisob") { }
+    public static readonly CustomFisob Instance = new CustomFisob();
+    
+    private CustomFisob : base("custom_fisob") { }
 
     public override AbstractPhysicalObject? Parse(World world, EntitySaveData saveData) {
         return new CustomAPO(world, saveData.Pos, saveData.ID);
@@ -26,7 +28,7 @@ class CustomFisob : Fisob {
 }
 
 class CustomAPO : AbstractPhysicalObject {
-    public CustomAPO(World world, WorldCoordinate pos, EntityID ID) : base(world, MyMod.Fisobs["custom_fisob"].Type, null, pos, ID) { }
+    public CustomAPO(World world, WorldCoordinate pos, EntityID ID) : base(world, CustomFisob.Instance.Type, null, pos, ID) { }
     
     public override string ToString() => this.SaveAsString("");
     
@@ -45,7 +47,7 @@ class MyMod {
     public static readonly FisobRegistry Fisobs = GetRegistry();
     
     static FisobRegistry GetRegistry() {
-        var ret = new FisobRegistry(new[] { new CustomFisob() });
+        var ret = new FisobRegistry(new[] { CustomFisob.Instance });
         return ret;
     }
 }
