@@ -44,11 +44,8 @@ class CustomPO : PhysicalObject {
 }
 
 class MyMod {
-    public static readonly FisobRegistry Fisobs = GetRegistry();
-    
-    static FisobRegistry GetRegistry() {
-        var ret = new FisobRegistry(new[] { CustomFisob.Instance });
-        return ret;
+    void OnEnable() {
+        new FisobRegistry(new[] { CustomFisob.Instance }).ApplyHooks();
     }
 }
 ```
