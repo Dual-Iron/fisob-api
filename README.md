@@ -55,20 +55,17 @@ class MyMod {
 # How to integrate into your project
 There are a few ways.
 - Manual
-    1. Drop the source code into a new folder in your project
-    2. To update, delete the folder and repeat the previous step
+    1. Drop the [source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project
 - Git
     1. Run `git submodule add https://github.com/Dual-Iron/fisob-api lib/fisob-api` in your working tree
-    2. To update, run `git submodule update --remote lib/fisob-api` in your working tree
 - Dependency
     1. Download the compiled assembly from [here](https://github.com/Dual-Iron/fisob-api/releases/latest)
     2. Either embed that file or package it with yours
-    3. To update, repeat the previous steps
 
-I suggest going with manual or git integration. It's one less file to download and it's the most compatible with other projects.
+I suggest going with manual or Git integration. You'll have to compile the source yourself, but it's one less file to download for end users.
 
 <details>
-    <summary>Ok, but I can't compile the source code</summary>
+    <summary>I can't compile the source code</summary>
     
 It's probably because your C# version is outdated. 
     
