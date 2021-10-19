@@ -8,22 +8,22 @@ namespace Fisobs;
 public struct EntitySaveData
 {
     /// <summary>
-    /// The abstract object's type.
+    /// The APO's type.
     /// </summary>
     public readonly ObjType ObjectType;
 
     /// <summary>
-    /// The abstract object's ID.
+    /// The APO's ID.
     /// </summary>
     public readonly EntityID ID;
 
     /// <summary>
-    /// The abstract object's position.
+    /// The APO's position.
     /// </summary>
     public readonly WorldCoordinate Pos;
 
     /// <summary>
-    /// Any extra data associated with the object. This can be an empty string, but not null.
+    /// Any extra data associated with the APO. This can be an empty string, but not null.
     /// </summary>
     public readonly string CustomData;
 
@@ -39,7 +39,7 @@ public struct EntitySaveData
     /// Creates an instance of the <see cref="EntitySaveData"/> struct.
     /// </summary>
     /// <param name="apo">The abstract physical object to get basic data from.</param>
-    /// <param name="customData">Extra data associated with the physical object. This data should never contain &lt; characters.</param>
+    /// <param name="customData">Extra data associated with the abstract physical object. This data should never contain &lt; characters.</param>
     /// <returns>A new instance of <see cref="EntitySaveData"/>.</returns>
     /// <exception cref="ArgumentException">Thrown when <paramref name="customData"/> contains &lt; characters.</exception>
     public static EntitySaveData CreateFrom(AbstractPhysicalObject apo, string customData)

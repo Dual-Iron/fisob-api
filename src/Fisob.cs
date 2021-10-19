@@ -1,7 +1,7 @@
 ﻿namespace Fisobs;
 
 /// <summary>
-/// Provides methods to simplify the creation of physical objects.
+/// Provides methods to simplify the creation of custom <see cref="PhysicalObject"/> and <see cref="AbstractPhysicalObject"/> types.
 /// </summary>
 public abstract class Fisob
 {
@@ -39,21 +39,15 @@ public abstract class Fisob
     public AbstractPhysicalObject.AbstractObjectType Type { get; internal set; } = (AbstractPhysicalObject.AbstractObjectType)(-1);
 
     /// <summary>
-    /// Gets an abstract physical object from saved data.
+    /// Gets an APO from saved data.
     /// </summary>
     /// <returns>A newly created abstract physical object, or <see langword="null"/>.</returns>
     public abstract AbstractPhysicalObject? Parse(World world, EntitySaveData saveData);
 
     /// <summary>
-    /// Gets saved data from an abstract physical object.
+    /// Gets an object representing the properties of a PO.
     /// </summary>
-    /// <returns>A newly created <see cref="EntitySaveData"/> instance. See the <see cref="EntitySaveData.CreateFrom(AbstractPhysicalObject, string)"/> method.</returns>
-    public abstract EntitySaveData Save(World world, AbstractPhysicalObject apo);
-
-    /// <summary>
-    /// Gets an object representing the properties of a physical object.
-    /// </summary>
-    /// <returns>A newly created behavior object.</returns>
+    /// <returns>A newly created <see cref="FisobProperties"/> instance.</returns>
     /// <remarks>Do not return <see langword="null"/> from this method. Return <see cref="FisobProperties.Default"/> instead.</remarks>
     public virtual FisobProperties GetBehavior(PhysicalObject forObject) => FisobProperties.Default;
 }

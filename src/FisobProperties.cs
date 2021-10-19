@@ -1,7 +1,7 @@
 ﻿namespace Fisobs;
 
 /// <summary>
-/// Provides methods to define physical objects' properties.
+/// Provides methods to define the properties of custom <see cref="PhysicalObject"/> types.
 /// </summary>
 public class FisobProperties
 {

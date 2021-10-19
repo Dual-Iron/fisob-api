@@ -52,4 +52,16 @@ public static class FisobExtensions
         else
             Debug.Log("TRYING TO REALIZE IN NON REALIZED ROOM! " + apo);
     }
+
+    /// <summary>
+    /// Gets a string representation of an APO.
+    /// </summary>
+    /// <param name="apo">The abstract physical object.</param>
+    /// <param name="customData">Extra data associated with the abstract physical object. This data should never contain &lt; characters.</param>
+    /// <returns>A string representing this APO, for use in <see cref="AbstractPhysicalObject.ToString"/>.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="customData"/> contains &lt; characters.</exception>
+    public static string SaveAsString(this AbstractPhysicalObject apo, string customData)
+    {
+        return EntitySaveData.CreateFrom(apo, customData).ToString();
+    }
 }
