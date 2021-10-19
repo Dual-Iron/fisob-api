@@ -13,7 +13,7 @@ namespace Fisobs
     /// <remarks>Users should create one instance of this class and pass it around. After creating a new instance, <see cref="ApplyHooks"/> should be called.</remarks>
     public sealed class FisobRegistry
     {
-        private readonly Dictionary<string, Fisob> fisobsByID = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Fisob> fisobsByID = new Dictionary<string, Fisob>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Creates a new fisob registry from the provided set of <see cref="Fisob"/> instances.
@@ -148,7 +148,7 @@ namespace Fisobs
             return ret;
         }
 
-        private AbstractPhysicalObject? SaveState_AbstractPhysicalObjectFromString(On.SaveState.orig_AbstractPhysicalObjectFromString orig, World world, string objString)
+        private AbstractPhysicalObject SaveState_AbstractPhysicalObjectFromString(On.SaveState.orig_AbstractPhysicalObjectFromString orig, World world, string objString)
         {
             string[] array = objString.Split(new[] { "<oA>" }, 3, StringSplitOptions.None);
 
@@ -163,7 +163,7 @@ namespace Fisobs
                     int.TryParse(coordParts[1], out int x) &&
                     int.TryParse(coordParts[2], out int y) &&
                     int.TryParse(coordParts[3], out int node)) {
-                    coord = new(room, x, y, node);
+                    coord = new WorldCoordinate(room, x, y, node);
                 } else {
                     Debug.Log($"Corrupt world coordinate on object \"{id}\", type \"{o.ID}\"");
                     return null;
@@ -172,7 +172,7 @@ namespace Fisobs
                 string extraData = objString.Substring(array[0].Length + array[1].Length + array[2].Length);
 
                 try {
-                    return o.Parse(world, new(o.Type, id, coord, extraData));
+                    return o.Parse(world, new EntitySaveData(o.Type, id, coord, extraData));
                 } catch (Exception e) {
                     Debug.LogError(e);
                     return null;

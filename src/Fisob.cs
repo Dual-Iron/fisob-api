@@ -46,7 +46,7 @@ namespace Fisobs
         /// Gets an APO from saved data.
         /// </summary>
         /// <returns>A newly created abstract physical object, or <see langword="null"/>.</returns>
-        public abstract AbstractPhysicalObject? Parse(World world, EntitySaveData saveData);
+        public abstract AbstractPhysicalObject Parse(World world, EntitySaveData saveData);
 
         /// <summary>
         /// Gets an object representing the properties of a PO.

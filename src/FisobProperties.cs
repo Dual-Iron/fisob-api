@@ -8,7 +8,7 @@
         /// <summary>
         /// The default behavior for a fisob. Does nothing unique.
         /// </summary>
-        public static FisobProperties Default { get; } = new();
+        public static FisobProperties Default { get; } = new FisobProperties();
 
         /// <summary>
         /// Modifies how highly a scavenger values an item as a collectable.

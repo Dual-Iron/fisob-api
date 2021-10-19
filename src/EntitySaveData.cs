@@ -54,14 +54,14 @@ namespace Fisobs
                 throw new ArgumentException("Custom data cannot contain < characters.");
             }
 
-            return new(apo.type, apo.ID, apo.pos, customData);
+            return new EntitySaveData(apo.type, apo.ID, apo.pos, customData);
         }
 
         /// <summary>
         /// Gets this entity's saved data as a string.
         /// </summary>
         /// <returns>A string representation of this data.</returns>
-        public override readonly string ToString()
+        public override string ToString()
         {
             string customDataStr = string.IsNullOrEmpty(CustomData) ? "" : $"<oA>{CustomData}";
             return $"{ID}<oA>{ObjectType}<oA>{Pos.room}.{Pos.x}.{Pos.y}.{Pos.abstractNode}{customDataStr}";
