@@ -7,7 +7,7 @@ namespace Fisobs
     /// <summary>
     /// Represents saved information about <see cref="AbstractPhysicalObject"/> instances.
     /// </summary>
-    public struct EntitySaveData
+    public readonly struct EntitySaveData
     {
         /// <summary>
         /// The APO's type.
@@ -61,7 +61,7 @@ namespace Fisobs
         /// Gets this entity's saved data as a string.
         /// </summary>
         /// <returns>A string representation of this data.</returns>
-        public override string ToString()
+        public override readonly string ToString()
         {
             string customDataStr = string.IsNullOrEmpty(CustomData) ? "" : $"<oA>{CustomData}";
             return $"{ID}<oA>{ObjectType}<oA>{Pos.room}.{Pos.x}.{Pos.y}.{Pos.abstractNode}{customDataStr}";
