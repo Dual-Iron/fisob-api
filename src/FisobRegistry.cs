@@ -176,9 +176,9 @@ namespace Fisobs
 
         private AbstractPhysicalObject SaveState_AbstractPhysicalObjectFromString(On.SaveState.orig_AbstractPhysicalObjectFromString orig, World world, string objString)
         {
-            string[] array = objString.Split(new[] { "<oA>" }, 3, StringSplitOptions.None);
+            string[] array = objString.Split(new[] { "<oA>" }, StringSplitOptions.None);
 
-            if (fisobsByID.TryGetValue(array[1], out Fisob o)) {
+            if (fisobsByID.TryGetValue(array[1], out Fisob o) && array.Length > 2) {
                 EntityID id = EntityID.FromString(array[0]);
 
                 string[] coordParts = array[2].Split('.');
@@ -191,16 +191,21 @@ namespace Fisobs
                     int.TryParse(coordParts[3], out int node)) {
                     coord = new WorldCoordinate(room, x, y, node);
                 } else {
-                    Debug.Log($"Corrupt world coordinate on object \"{id}\", type \"{o.ID}\"");
+                    Debug.Log($"{nameof(Fisobs)} : Corrupt world coordinate on object \"{id}\", type \"{o.ID}\"");
                     return null;
                 }
 
-                string extraData = objString.Substring(array[0].Length + array[1].Length + array[2].Length);
+                string customData = array.Length == 4 ? array[3] : "";
+
+                if (array.Length > 4) {
+                    Debug.LogError($"{nameof(Fisobs)} : Save data had more than 4 <oA> sections in \"{o.ID}\". Override `APO.ToString()` to return `this.SaveAsString(...)`.");
+                    return null;
+                }
 
                 try {
-                    return o.Parse(world, new EntitySaveData(o.Type, id, coord, extraData));
+                    return o.Parse(world, new EntitySaveData(o.Type, id, coord, customData));
                 } catch (Exception e) {
-                    Debug.LogError(e);
+                    Debug.LogError($"{nameof(Fisobs)} : {e}");
                     return null;
                 }
             }

@@ -17,7 +17,7 @@ namespace Fisobs
         public static void Spawn(this AbstractPhysicalObject apo, Vector2 pos, Vector2 vel)
         {
             if (apo.realizedObject != null) {
-                Debug.Log("TRYING TO REALIZE TWICE! " + apo);
+                Debug.Log($"{nameof(Fisobs)} : TRYING TO REALIZE TWICE! " + apo);
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace Fisobs
             if (apo.Room.realizedRoom != null)
                 Spawn(apo, apo.Room.realizedRoom.MiddleOfTile(apo.pos.Tile), Vector2.zero);
             else
-                Debug.Log("TRYING TO REALIZE IN NON REALIZED ROOM! " + apo);
+                Debug.Log($"{nameof(Fisobs)} : TRYING TO REALIZE IN NON REALIZED ROOM! " + apo);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Fisobs
         /// <param name="customData">Extra data associated with the abstract physical object. This data should never contain &lt; characters.</param>
         /// <returns>A string representing this APO, for use in <see cref="AbstractPhysicalObject.ToString"/>.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="customData"/> contains &lt; characters.</exception>
-        public static string SaveAsString(this AbstractPhysicalObject apo, string customData)
+        public static string SaveToString(this AbstractPhysicalObject apo, string customData)
         {
             return EntitySaveData.CreateFrom(apo, customData).ToString();
         }
