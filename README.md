@@ -34,7 +34,7 @@ class CustomFisob : Fisob {
 class CustomAPO : AbstractPhysicalObject {
     public CustomAPO(World world, WorldCoordinate pos, EntityID ID) : base(world, CustomFisob.Instance.Type, null, pos, ID) { }
     
-    public override string ToString() => this.SaveAsString("");
+    public override string ToString() => this.SaveToString("");
     
     public override void Realize() {
         base.Realize();
@@ -57,11 +57,10 @@ class MyMod {
 </details>
 
 # How to integrate into your project
-There are a few ways.
-- Manual
-    1. Drop the [source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project
-- Git
-    1. Run `git submodule add https://github.com/Dual-Iron/fisob-api lib/fisob-api` in your working tree
-    2. Include the files in the `lib` folder as project items
+First, reference EnumExtender in your project.
 
-In any case, rename the `Fisobs` namespace in your project to avoid conflicts.
+Then, add the source to your project. There are a few ways.
+- Manual: Drop the [source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
+- Git clone: Clone or fork this repository into a new folder in your project.
+
+Remember to rename the Fisobs namespace. You're good to go!
