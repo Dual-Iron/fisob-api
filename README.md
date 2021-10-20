@@ -13,16 +13,20 @@ If you want your APO to have custom data, include it as the parameter in `SaveAs
 
 You're good to go!
 
+# Examples
+
+The entire [CentiShields](https://github.com/Dual-Iron/centipede-shields) mod is a glorified example of fisob-api. Steal some code from there.
+
 <details>
-    <summary>Example</summary>
+    <summary>Click here for a more concise example.</summary>
     
 ```cs
 class CustomFisob : Fisob {
     public static readonly CustomFisob Instance = new CustomFisob();
     
-    private CustomFisob : base("custom_fisob") { }
+    private CustomFisob() : base("custom_fisob") { }
 
-    public override AbstractPhysicalObject? Parse(World world, EntitySaveData saveData) {
+    public override AbstractPhysicalObject Parse(World world, EntitySaveData saveData) {
         return new CustomAPO(world, saveData.Pos, saveData.ID);
     }
 }
@@ -34,7 +38,8 @@ class CustomAPO : AbstractPhysicalObject {
     
     public override void Realize() {
         base.Realize();
-        realizedObject ??= new CustomPO(...);
+        if (realizedObject == null)
+            realizedObject = new CustomPO(...);
     }
 }
 
