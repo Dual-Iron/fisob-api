@@ -63,3 +63,5 @@ There are a few ways.
 - Git
     1. Run `git submodule add https://github.com/Dual-Iron/fisob-api lib/fisob-api` in your working tree
     2. Include the files in the `lib` folder as project items
+
+In any case, rename the `Fisobs` namespace in your project to avoid conflicts.
