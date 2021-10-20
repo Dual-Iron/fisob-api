@@ -63,8 +63,3 @@ There are a few ways.
 - Git
     1. Run `git submodule add https://github.com/Dual-Iron/fisob-api lib/fisob-api` in your working tree
     2. Include the files in the `lib` folder as project items
-- Dependency
-    1. Download the compiled assembly from [here](https://github.com/Dual-Iron/fisob-api/releases/latest)
-    2. Either embed that file or package it with yours
-
-I suggest going with manual or Git integration. It's one less file for end users to download.
