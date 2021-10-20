@@ -15,7 +15,7 @@
         /// </summary>
         /// <param name="scav">The scavenger.</param>
         /// <param name="score">The score. Items with higher scores will be picked up first.</param>
-        public virtual void GetScavCollectScore(Scavenger scav, ref int score) { }
+        public virtual void GetScavCollectibleScore(Scavenger scav, ref int score) { }
 
         /// <summary>
         /// Modifies how much a scavenger wants to pick up a weapon.

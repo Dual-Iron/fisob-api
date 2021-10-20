@@ -168,7 +168,7 @@ namespace Fisobs
 
             int ret = orig(self, obj, weaponFiltered);
 
-            P(obj)?.GetScavCollectScore(self.scavenger, ref ret);
+            P(obj)?.GetScavCollectibleScore(self.scavenger, ref ret);
 
             return ret;
         }
