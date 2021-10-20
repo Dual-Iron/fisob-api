@@ -16,7 +16,7 @@ namespace Fisobs
         static FisobRegistry()
         {
             if (nameof(Fisobs) == "Fisobs") {
-                Exception e = new Exception("Rename the Fisobs assembly! " + typeof(FisobRegistry).Assembly.FullName);
+                Exception e = new Exception("Rename the Fisobs namespace! " + typeof(FisobRegistry).Assembly.FullName);
 
                 Debug.LogError(e);
                 throw e;
