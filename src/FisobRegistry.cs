@@ -97,6 +97,8 @@ namespace Fisobs
         {
             On.Player.IsObjectThrowable += Player_IsObjectThrowable;
             On.Player.Grabability += Player_Grabability;
+            On.ScavengerAI.RealWeapon += ScavengerAI_RealWeapon;
+            On.ScavengerAI.WeaponScore += ScavengerAI_WeaponScore;
             On.ScavengerAI.CollectScore_PhysicalObject_bool += ScavengerAI_CollectScore_PhysicalObject_bool;
             On.SaveState.AbstractPhysicalObjectFromString += SaveState_AbstractPhysicalObjectFromString;
         }
@@ -108,17 +110,24 @@ namespace Fisobs
         {
             On.Player.IsObjectThrowable -= Player_IsObjectThrowable;
             On.Player.Grabability -= Player_Grabability;
+            On.ScavengerAI.RealWeapon -= ScavengerAI_RealWeapon;
+            On.ScavengerAI.WeaponScore -= ScavengerAI_WeaponScore;
             On.ScavengerAI.CollectScore_PhysicalObject_bool -= ScavengerAI_CollectScore_PhysicalObject_bool;
             On.SaveState.AbstractPhysicalObjectFromString -= SaveState_AbstractPhysicalObjectFromString;
+        }
+
+        private FisobProperties P(PhysicalObject po)
+        {
+            if (po is null) return null;
+            if (!fisobsByID.TryGetValue(po.abstractPhysicalObject.type.ToString(), out var f)) return null;
+            return f.GetProperties(po);
         }
 
         private bool Player_IsObjectThrowable(On.Player.orig_IsObjectThrowable orig, Player self, PhysicalObject obj)
         {
             bool ret = orig(self, obj);
 
-            if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
-                fisob.GetBehavior(obj).CanThrow(self, ref ret);
-            }
+            P(obj)?.CanThrow(self, ref ret);
 
             return ret;
         }
@@ -127,23 +136,39 @@ namespace Fisobs
         {
             Player.ObjectGrabability ret = (Player.ObjectGrabability)orig(self, obj);
 
-            if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
-                fisob.GetBehavior(obj).GetGrabability(self, ref ret);
-            }
+            P(obj)?.GetGrabability(self, ref ret);
 
             return (int)ret;
         }
 
+        private bool ScavengerAI_RealWeapon(On.ScavengerAI.orig_RealWeapon orig, ScavengerAI self, PhysicalObject obj)
+        {
+            bool ret = orig(self, obj);
+
+            P(obj)?.IsLethalWeapon(self.scavenger, ref ret);
+
+            return ret;
+        }
+
+        private int ScavengerAI_WeaponScore(On.ScavengerAI.orig_WeaponScore orig, ScavengerAI self, PhysicalObject obj, bool pickupDropInsteadOfWeaponSelection)
+        {
+            int ret = orig(self, obj, pickupDropInsteadOfWeaponSelection);
+
+            if (pickupDropInsteadOfWeaponSelection)
+                P(obj)?.GetScavWeaponPickupScore(self.scavenger, ref ret);
+            else
+                P(obj)?.GetScavWeaponUseScore(self.scavenger, ref ret);
+
+            return ret;
+        }
+
         private int ScavengerAI_CollectScore_PhysicalObject_bool(On.ScavengerAI.orig_CollectScore_PhysicalObject_bool orig, ScavengerAI self, PhysicalObject obj, bool weaponFiltered)
         {
+            if (weaponFiltered) return orig(self, obj, true);
+
             int ret = orig(self, obj, weaponFiltered);
 
-            if (TryGet(obj.abstractPhysicalObject.type, out var fisob)) {
-                if (weaponFiltered && self.NeedAWeapon)
-                    fisob.GetBehavior(obj).GetScavengerWeaponScore(self.scavenger, ref ret);
-                else
-                    fisob.GetBehavior(obj).GetScavengerCollectScore(self.scavenger, ref ret);
-            }
+            P(obj)?.GetScavCollectScore(self.scavenger, ref ret);
 
             return ret;
         }

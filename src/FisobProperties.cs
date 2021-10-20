@@ -11,18 +11,34 @@
         public static FisobProperties Default { get; } = new FisobProperties();
 
         /// <summary>
-        /// Modifies how highly a scavenger values an item as a collectable.
+        /// Modifies how much a scavenger wants to pick up a collectable.
         /// </summary>
-        /// <param name="scavenger">The scavenger.</param>
-        /// <param name="score">The score.</param>
-        public virtual void GetScavengerCollectScore(Scavenger scavenger, ref int score) { }
+        /// <param name="scav">The scavenger.</param>
+        /// <param name="score">The score. Items with higher scores will be picked up first.</param>
+        public virtual void GetScavCollectScore(Scavenger scav, ref int score) { }
 
         /// <summary>
-        /// Modifies how highly a scavenger values an item as a weapon.
+        /// Modifies how much a scavenger wants to pick up a weapon.
         /// </summary>
-        /// <param name="scavenger">The scavenger.</param>
-        /// <param name="score">The score.</param>
-        public virtual void GetScavengerWeaponScore(Scavenger scavenger, ref int score) { }
+        /// <param name="scav">The scavenger.</param>
+        /// <param name="score">The score. Items with higher scores will be picked up first.</param>
+        public virtual void GetScavWeaponPickupScore(Scavenger scav, ref int score) { }
+
+        /// <summary>
+        /// Modifies how much a scavenger wants to use a weapon.
+        /// </summary>
+        /// <remarks>Bombs, for instance, have a high pickup score but a low use score—they're valuable, but they're a last resort in combat.</remarks>
+        /// <param name="scav">The scavenger.</param>
+        /// <param name="score">The score. Items with higher scores will be used first.</param>
+        public virtual void GetScavWeaponUseScore(Scavenger scav, ref int score) { }
+
+        /// <summary>
+        /// Modifies when scavengers will use a weapon. Scavengers only use lethal weapons when they intend to kill.
+        /// </summary>
+        /// <remarks>In vanilla, only <see cref="Spear"/> and <see cref="ScavengerBomb"/> objects are considered lethal.</remarks>
+        /// <param name="scav">The scavenger.</param>
+        /// <param name="isLethal">If the item is lethal, <see langword="true"/>; otherwise, <see langword="false"/>.</param>
+        public virtual void IsLethalWeapon(Scavenger scav, ref bool isLethal) { }
 
         /// <summary>
         /// Modifies how easily a player can grasp an item.

@@ -53,6 +53,6 @@ namespace Fisobs
         /// </summary>
         /// <returns>An instance of <see cref="FisobProperties"/>.</returns>
         /// <remarks>Do not return <see langword="null"/> from this method. Return <see cref="FisobProperties.Default"/> instead.</remarks>
-        public virtual FisobProperties GetBehavior(PhysicalObject forObject) => FisobProperties.Default;
+        public virtual FisobProperties GetProperties(PhysicalObject forObject) => FisobProperties.Default;
     }
 }
