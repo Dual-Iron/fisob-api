@@ -13,6 +13,16 @@ namespace Fisobs
     /// <remarks>Users should create one instance of this class and pass it around. After creating a new instance, <see cref="ApplyHooks"/> should be called.</remarks>
     public sealed class FisobRegistry
     {
+        static FisobRegistry()
+        {
+            if (nameof(Fisobs) == "Fisobs") {
+                Exception e = new Exception("Rename the Fisobs assembly! " + typeof(FisobRegistry).Assembly.FullName);
+
+                Debug.LogError(e);
+                throw e;
+            }
+        }
+
         private readonly Dictionary<string, Fisob> fisobsByID = new Dictionary<string, Fisob>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
