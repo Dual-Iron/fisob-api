@@ -11,7 +11,7 @@
         public static FisobProperties Default { get; } = new FisobProperties();
 
         /// <summary>
-        /// Modifies how much a scavenger wants to pick up a collectable.
+        /// Modifies how much a scavenger wants to pick up a collectible.
         /// </summary>
         /// <param name="scav">The scavenger.</param>
         /// <param name="score">The score. Items with higher scores will be picked up first.</param>
