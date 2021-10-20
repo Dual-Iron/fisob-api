@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
+#error Right-click "Fisobs" on the line below and click Rename. Once you've renamed it, remove this line.
 namespace Fisobs
 {
     /// <summary>
@@ -13,16 +14,6 @@ namespace Fisobs
     /// <remarks>Users should create one instance of this class and pass it around. After creating a new instance, <see cref="ApplyHooks"/> should be called.</remarks>
     public sealed class FisobRegistry
     {
-        static FisobRegistry()
-        {
-            if (nameof(Fisobs) == "Fisobs") {
-                Exception e = new Exception("Rename the Fisobs namespace! " + typeof(FisobRegistry).Assembly.FullName);
-
-                Debug.LogError(e);
-                throw e;
-            }
-        }
-
         private readonly Dictionary<string, Fisob> fisobsByID = new Dictionary<string, Fisob>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
