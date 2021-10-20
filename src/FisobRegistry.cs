@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-#error Right-click "Fisobs" on the line below and click Rename. Once you've renamed it, remove this line.
 namespace Fisobs
 {
     /// <summary>
