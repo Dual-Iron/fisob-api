@@ -3,12 +3,17 @@
     /// <summary>
     /// Provides methods to define the properties of custom <see cref="PhysicalObject"/> types.
     /// </summary>
-    public class FisobProperties
+    public abstract class FisobProperties
     {
+        private sealed class FisobPropertiesDefault : FisobProperties
+        {
+            public FisobPropertiesDefault() { }
+        }
+
         /// <summary>
         /// The default behavior for a fisob. Does nothing unique.
         /// </summary>
-        public static FisobProperties Default { get; } = new FisobProperties();
+        public static FisobProperties Default { get; } = new FisobPropertiesDefault();
 
         /// <summary>
         /// Modifies how much a scavenger wants to pick up a collectible.
