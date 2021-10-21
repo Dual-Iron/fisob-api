@@ -61,7 +61,7 @@ namespace Fisobs
         /// <param name="customData">Extra data associated with the abstract physical object. This data should never contain &lt; characters.</param>
         /// <returns>A string representing this APO, for use in <see cref="AbstractPhysicalObject.ToString"/>.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="customData"/> contains &lt; characters.</exception>
-        public static string SaveToString(this AbstractPhysicalObject apo, string customData)
+        public static string SaveToString(this AbstractPhysicalObject apo, string customData = "")
         {
             return EntitySaveData.CreateFrom(apo, customData).ToString();
         }

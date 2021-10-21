@@ -57,14 +57,17 @@ namespace Fisobs
         }
 
         /// <summary>
-        /// Gets an APO from saved data.
+        /// Gets an APO from save data.
         /// </summary>
+        /// <param name="world">The current world instance.</param>
+        /// <param name="saveData">The save data associated with the entity.</param>
         /// <returns>A newly created abstract physical object, or <see langword="null"/>.</returns>
         public abstract AbstractPhysicalObject Parse(World world, EntitySaveData saveData);
 
         /// <summary>
         /// Gets an object representing the properties of a PO.
         /// </summary>
+        /// <param name="forObject">The physical object whose properties to get.</param>
         /// <returns>An instance of <see cref="FisobProperties"/>.</returns>
         /// <remarks>Do not return <see langword="null"/> from this method. Return <see cref="FisobProperties.Default"/> instead.</remarks>
         public virtual FisobProperties GetProperties(PhysicalObject forObject) => FisobProperties.Default;
