@@ -31,7 +31,12 @@ namespace Fisobs
             ID = id;
         }
 
-        internal AbstractPhysicalObject.AbstractObjectType? type;
+        private AbstractPhysicalObject.AbstractObjectType? type;
+
+        /// <summary>
+        /// If this fisob has been added to a <see cref="FisobRegistry"/>, <see langword="true"/>; otherwise, <see langword="false"/>.
+        /// </summary>
+        public bool IsInRegistry => type != null;
 
         /// <summary>
         /// This fisob's unique identifier.
@@ -41,7 +46,15 @@ namespace Fisobs
         /// <summary>
         /// This fisob's enum value.
         /// </summary> 
-        public AbstractPhysicalObject.AbstractObjectType Type => type ?? throw new InvalidOperationException($"The fisob \"{ID}\" hasn't been added to a registry yet.");
+        public AbstractPhysicalObject.AbstractObjectType Type {
+            get => type ?? throw new InvalidOperationException($"The fisob \"{ID}\" hasn't been added to a registry yet.");
+            internal set {
+                if (type == null)
+                    type = value;
+                else
+                    throw new InvalidOperationException($"The fisob \"{ID}\" already has a type.");
+            }
+        }
 
         /// <summary>
         /// Gets an APO from saved data.

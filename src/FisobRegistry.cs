@@ -26,7 +26,7 @@ namespace Fisobs
 
             // Verify fisobs first
             foreach (Fisob fisob in fisobs) {
-                if (fisob.type != null) {
+                if (fisob.IsInRegistry) {
                     throw new InvalidOperationException($"The fisob \"{fisob.ID}\" is already in a registry.");
                 }
 
@@ -50,7 +50,7 @@ namespace Fisobs
 
             // Assign their types
             foreach (Fisob fisob in fisobs) {
-                fisob.type = (ObjType)Enum.Parse(t, fisob.ID, true);
+                fisob.Type = (ObjType)Enum.Parse(t, fisob.ID, true);
             }
         }
 
