@@ -5,28 +5,18 @@
     /// </summary>
     public abstract class FisobProperties
     {
-        private sealed class FisobPropertiesDefault : FisobProperties
-        {
-            public FisobPropertiesDefault() { }
-        }
-
-        /// <summary>
-        /// The default behavior for a fisob. Does nothing unique.
-        /// </summary>
-        public static FisobProperties Default { get; } = new FisobPropertiesDefault();
-
         /// <summary>
         /// Modifies how much a scavenger wants to pick up a collectible.
         /// </summary>
         /// <param name="scav">The scavenger.</param>
-        /// <param name="score">The score. Items with higher scores will be picked up first.</param>
+        /// <param name="score">Items with higher scores will be picked up first.</param>
         public virtual void GetScavCollectibleScore(Scavenger scav, ref int score) { }
 
         /// <summary>
         /// Modifies how much a scavenger wants to pick up a weapon.
         /// </summary>
         /// <param name="scav">The scavenger.</param>
-        /// <param name="score">The score. Items with higher scores will be picked up first.</param>
+        /// <param name="score">Items with higher scores will be picked up first.</param>
         public virtual void GetScavWeaponPickupScore(Scavenger scav, ref int score) { }
 
         /// <summary>
@@ -34,7 +24,7 @@
         /// </summary>
         /// <remarks>Bombs, for instance, have a high pickup score but a low use score—they're valuable, but they're a last resort in combat.</remarks>
         /// <param name="scav">The scavenger.</param>
-        /// <param name="score">The score. Items with higher scores will be used first.</param>
+        /// <param name="score">Items with higher scores will be used first.</param>
         public virtual void GetScavWeaponUseScore(Scavenger scav, ref int score) { }
 
         /// <summary>

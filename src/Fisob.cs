@@ -68,8 +68,7 @@ namespace Fisobs
         /// Gets an object representing the properties of a PO.
         /// </summary>
         /// <param name="forObject">The physical object whose properties to get.</param>
-        /// <returns>An instance of <see cref="FisobProperties"/>.</returns>
-        /// <remarks>Do not return <see langword="null"/> from this method. Return <see cref="FisobProperties.Default"/> instead.</remarks>
-        public virtual FisobProperties GetProperties(PhysicalObject forObject) => FisobProperties.Default;
+        /// <returns>An instance of <see cref="FisobProperties"/>, or <see langword="null"/>.</returns>
+        public virtual FisobProperties GetProperties(PhysicalObject forObject) => null;
     }
 }
