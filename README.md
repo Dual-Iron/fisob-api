@@ -4,10 +4,11 @@ A small API that streamlines adding new types of physical objects to Rain World.
 Requires EnumExtender.
 
 # Step-by-step guide
-1. Have classes deriving from `PhysicalObject` (PO) and `AbstractPhysicalObject` (APO)
-2. Override `AbstractPhysicalObject.ToString()` to return `this.SaveAsString("");`
-3. Create a class deriving from `Fisob` for each APO
-4. Create an instance of `FisobRegistry` and call `ApplyHooks` on it
+To create a physical object:
+1. Have a class deriving from `PhysicalObject` and another from `AbstractPhysicalObject`
+2. In the `AbstractPhysicalObject` class, override `ToString()` and return `this.SaveAsString("");`
+3. Create a class deriving from `Fisob`
+4. Create an instance of `FisobRegistry` and call `ApplyHooks` when your mod loads
 
 If you want your APO to have custom data, include it as the parameter in `SaveAsString` and parse it in `Fisob.Parse`.
 
