@@ -61,7 +61,7 @@ class MyMod {
 First, reference EnumExtender in your project.
 
 Then, add the source to your project. There are a few ways.
-- [Recommended] Clone [the repository](https://github.com/Dual-Iron/RwModLoader.git) into a new folder in your project.
+- [Recommended] Clone [the repository](https://github.com/Dual-Iron/fisob-api.git) into a new folder in your project.
 - Drop [the source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
 
 Remember to rename the Fisobs namespace. You're good to go!
