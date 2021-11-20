@@ -6,7 +6,7 @@ Requires EnumExtender.
 # Step-by-step guide
 To create a physical object:
 1. Have a class deriving from `PhysicalObject` and another from `AbstractPhysicalObject`
-2. In the `AbstractPhysicalObject` class, override `ToString()` and return `this.SaveAsString("");`
+2. In the `AbstractPhysicalObject` class, override `ToString()` and return `this.SaveAsString();`
 3. Create a class deriving from `Fisob`
 4. Create an instance of `FisobRegistry` and call `ApplyHooks` when your mod loads
 
@@ -61,7 +61,7 @@ class MyMod {
 First, reference EnumExtender in your project.
 
 Then, add the source to your project. There are a few ways.
-- Manual: Drop the [source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
-- Git clone: Clone or fork this repository into a new folder in your project.
+- [Recommended] Clone [the repository](https://github.com/Dual-Iron/RwModLoader.git) into a new folder in your project.
+- Drop [the source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
 
 Remember to rename the Fisobs namespace. You're good to go!
