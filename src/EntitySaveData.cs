@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Fisobs
 {
@@ -53,7 +52,7 @@ namespace Fisobs
                 throw new ArgumentNullException(nameof(customData));
             }
 
-            if (customData.Contains('<')) {
+            if (customData.IndexOf('<') != -1) {
                 throw new ArgumentException("Custom data cannot contain < characters.");
             }
 

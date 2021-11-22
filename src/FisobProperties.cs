@@ -28,9 +28,12 @@
         public virtual void GetScavWeaponUseScore(Scavenger scav, ref int score) { }
 
         /// <summary>
-        /// Modifies when scavengers will use a weapon. Scavengers only use lethal weapons when they intend to kill.
+        /// Modifies how scavengers will use a weapon.
         /// </summary>
-        /// <remarks>In vanilla, only <see cref="Spear"/> and <see cref="ScavengerBomb"/> objects are considered lethal.</remarks>
+        /// <remarks>
+        /// In vanilla, only <see cref="Spear"/> and <see cref="ScavengerBomb"/> objects are considered lethal.
+        /// When using a lethal weapon, scavengers will purposely miss unless they intend to kill their target.
+        /// </remarks>
         /// <param name="scav">The scavenger.</param>
         /// <param name="isLethal">If the item is lethal, <see langword="true"/>; otherwise, <see langword="false"/>.</param>
         public virtual void IsLethalWeapon(Scavenger scav, ref bool isLethal) { }
