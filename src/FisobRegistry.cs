@@ -1,9 +1,12 @@
-﻿using ObjType = AbstractPhysicalObject.AbstractObjectType;
+﻿using static Menu.Menu;
+using static Menu.SandboxEditorSelector;
+using ObjType = AbstractPhysicalObject.AbstractObjectType;
 using PastebinMachine.EnumExtender;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using ArenaBehaviors;
 
 namespace Fisobs
 {
@@ -95,6 +98,13 @@ namespace Fisobs
         /// </summary>
         public void ApplyHooks()
         {
+            On.Menu.SandboxEditorSelector.ctor += SandboxEditorSelector_ctor;
+            On.RainWorld.LoadResources += RainWorld_LoadResources;
+            On.ItemSymbol.ColorForItem += ItemSymbol_ColorForItem;
+            On.ItemSymbol.SpriteNameForItem += ItemSymbol_SpriteNameForItem;
+            On.SandboxGameSession.SpawnEntity += SandboxGameSession_SpawnEntity;
+            On.Menu.SandboxEditorSelector.AddButton_Button_refInt32 += SandboxEditorSelector_AddButton_Button_refInt32;
+
             On.Player.IsObjectThrowable += Player_IsObjectThrowable;
             On.Player.Grabability += Player_Grabability;
             On.ScavengerAI.RealWeapon += ScavengerAI_RealWeapon;
@@ -108,6 +118,13 @@ namespace Fisobs
         /// </summary>
         public void UndoHooks()
         {
+            On.Menu.SandboxEditorSelector.ctor -= SandboxEditorSelector_ctor;
+            On.RainWorld.LoadResources -= RainWorld_LoadResources;
+            On.ItemSymbol.ColorForItem -= ItemSymbol_ColorForItem;
+            On.ItemSymbol.SpriteNameForItem -= ItemSymbol_SpriteNameForItem;
+            On.SandboxGameSession.SpawnEntity -= SandboxGameSession_SpawnEntity;
+            On.Menu.SandboxEditorSelector.AddButton_Button_refInt32 -= SandboxEditorSelector_AddButton_Button_refInt32;
+
             On.Player.IsObjectThrowable -= Player_IsObjectThrowable;
             On.Player.Grabability -= Player_Grabability;
             On.ScavengerAI.RealWeapon -= ScavengerAI_RealWeapon;
@@ -121,6 +138,91 @@ namespace Fisobs
             if (po is null) return null;
             if (!fisobsByID.TryGetValue(po.abstractPhysicalObject.type.ToString(), out var f)) return null;
             return f.GetProperties(po);
+        }
+
+        private void SandboxEditorSelector_ctor(On.Menu.SandboxEditorSelector.orig_ctor orig, Menu.SandboxEditorSelector self, Menu.Menu menu, Menu.MenuObject owner, SandboxOverlayOwner overlayOwner)
+        {
+            Width = 19;
+            Height = 4;
+            orig(self, menu, owner, overlayOwner);
+        }
+
+        private void RainWorld_LoadResources(On.RainWorld.orig_LoadResources orig, RainWorld self)
+        {
+            orig(self);
+
+            foreach (var fisob in fisobsByID.Values) {
+                fisob.LoadResources(self);
+            }
+        }
+
+        private Color ItemSymbol_ColorForItem(On.ItemSymbol.orig_ColorForItem orig, ObjType itemType, int intData)
+        {
+            if (fisobsByID.TryGetValue(itemType.ToString(), out var fisob)) {
+                return fisob.IconColor;
+            }
+            return orig(itemType, intData);
+        }
+
+        private string ItemSymbol_SpriteNameForItem(On.ItemSymbol.orig_SpriteNameForItem orig, ObjType itemType, int intData)
+        {
+            if (fisobsByID.TryGetValue(itemType.ToString(), out var fisob)) {
+                return fisob.IconName;
+            }
+            return orig(itemType, intData);
+        }
+
+        private void SandboxGameSession_SpawnEntity(On.SandboxGameSession.orig_SpawnEntity orig, SandboxGameSession self, SandboxEditor.PlacedIconData p)
+        {
+            if (fisobsByID.TryGetValue(p.data.itemType.ToString(), out var fisob)) {
+                WorldCoordinate coord = new WorldCoordinate(0, Mathf.RoundToInt(p.pos.x / 20f), Mathf.RoundToInt(p.pos.y / 20f), -1);
+                EntitySaveData data = new EntitySaveData(p.data.itemType, p.ID, coord, "");
+
+                try {
+                    self.game.world.GetAbstractRoom(0).AddEntity(fisob.Parse(self.game.world, data));
+                } catch (Exception e) {
+                    Debug.LogException(e);
+                    Debug.LogError($"The fisob {fisob.ID} threw an exception when being parsed in sandbox mode.");
+                }
+            }
+            orig(self, p);
+        }
+
+        private void SandboxEditorSelector_AddButton_Button_refInt32(On.Menu.SandboxEditorSelector.orig_AddButton_Button_refInt32 orig, Menu.SandboxEditorSelector self, Button button, ref int counter)
+        {
+            if (counter == MultiplayerUnlocks.ItemsUnlocks + 3 - 1) {
+                orig(self, button, ref counter);
+
+                foreach (var fisob in fisobsByID.Values) {
+                    var sandboxState = fisob.GetSandboxState(self.unlocks);
+
+                    if (sandboxState == SandboxState.Hidden) continue;
+
+                    if (counter >= Width * Height - 51) {
+                        self.bkgRect.size.y += ButtonSize;
+                        self.size.y += ButtonSize;
+                        self.pos.y += ButtonSize;
+                        Height += 1;
+
+                        Button[,] newArr = new Button[Width, Height];
+
+                        for (int i = 0; i < Width; i++) {
+                            for (int j = 0; j < Height - 1; j++) {
+                                newArr[i, j + 1] = self.buttons[i, j];
+                            }
+                        }
+
+                        self.buttons = newArr;
+                    }
+
+                    if (sandboxState == SandboxState.Unlocked)
+                        orig(self, new CreatureOrItemButton(self.menu, self, new IconSymbol.IconSymbolData(0, fisob.Type, 0)), ref counter);
+                    else
+                        orig(self, new LockedButton(self.menu, self), ref counter);
+                }
+            } else {
+                orig(self, button, ref counter);
+            }
         }
 
         private bool Player_IsObjectThrowable(On.Player.orig_IsObjectThrowable orig, Player self, PhysicalObject obj)
