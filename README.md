@@ -58,10 +58,7 @@ class MyMod {
 </details>
 
 # How to integrate into your project
-First, reference EnumExtender in your project.
-
-Then, add the source to your project. There are a few ways.
-- [Recommended] Clone [the repository](https://github.com/Dual-Iron/fisob-api.git) into a new folder in your project.
-- Drop [the source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
+1. Reference EnumExtender in your project.
+2. Drop [the fisobs source code](https://github.com/Dual-Iron/fisob-api/archive/refs/heads/master.zip) into a new folder in your project.
 
 Remember to rename the Fisobs namespace. You're good to go!
