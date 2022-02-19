@@ -179,13 +179,19 @@ namespace Fisobs
                 EntitySaveData data = new EntitySaveData(p.data.itemType, p.ID, coord, "");
 
                 try {
-                    self.game.world.GetAbstractRoom(0).AddEntity(fisob.Parse(self.game.world, data));
+                    var entity = fisob.Parse(self.game.world, data);
+                    if (entity != null) {
+                        self.game.world.GetAbstractRoom(0).AddEntity(entity);
+                    } else {
+                        Debug.LogError($"The fisob {fisob.ID} returned null when being parsed in sandbox mode.");
+                    }
                 } catch (Exception e) {
                     Debug.LogException(e);
                     Debug.LogError($"The fisob {fisob.ID} threw an exception when being parsed in sandbox mode.");
                 }
+            } else {
+                orig(self, p);
             }
-            orig(self, p);
         }
 
         private void SandboxEditorSelector_AddButton_Button_refInt32(On.Menu.SandboxEditorSelector.orig_AddButton_Button_refInt32 orig, Menu.SandboxEditorSelector self, Button button, ref int counter)
