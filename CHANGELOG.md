@@ -2,7 +2,7 @@
 - Simplify creature creation
 - Simplify sandbox unlocking (currently only has API for adding slots to the arena menu)
 
-## [TODO] 1.0.2
+## 1.0.2
 Fix objects in arena mode spawning a dummy object. Thanks @Henpemaz
 
 ## 1.0.1
