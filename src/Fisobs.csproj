@@ -2,15 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="$(References)/UnityEngine.dll" />
-    <Reference Include="$(References)/Assembly-CSharp.dll" />
-    <Reference Include="$(References)/HOOKS-Assembly-CSharp.dll" />
-    <Reference Include="$(References)/EnumExtender.dll" />
+    <Reference Include="../lib/stubbed.*.dll" />
   </ItemGroup>
 
 </Project>
