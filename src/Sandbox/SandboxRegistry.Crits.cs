@@ -63,10 +63,11 @@ namespace Fisobs.Sandbox
             orig(ref killScores);
 
             foreach (var unlock in UnlocksToAdd()) {
-                try {
-                    // SAFETY: Known to be non-null because UnlocksToAdd does not include nulls
-                    killScores[(int)unlock.Type] = unlock.KillScore.Value;
-                } catch (IndexOutOfRangeException) {
+                int unlockTy = (int)unlock.Type;
+
+                if (unlockTy >= 0 && unlockTy < killScores.Length) {
+                    killScores[unlockTy] = unlock.KillScore.Value;
+                } else {
                     Debug.LogError($"The sandbox unlock type \"{unlock.Type}\" ({(int)unlock.Type}) is not in the range [0, {killScores.Length}).");
                 }
             }

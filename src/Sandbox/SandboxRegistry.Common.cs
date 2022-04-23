@@ -170,7 +170,7 @@ namespace Fisobs.Sandbox
         {
             try {
                 return orig(unlockID);
-            } catch (ArgumentException) {
+            } catch {
                 foreach (var common in sboxes.Values) {
                     var unlock = common.SandboxUnlocks.FirstOrDefault(u => u.Type == unlockID);
                     if (unlock != null) {
