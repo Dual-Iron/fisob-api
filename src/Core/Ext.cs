@@ -99,5 +99,11 @@ namespace Fisobs.Core
 
             return true;
         }
+
+        internal static T[] ExpandedBy<T>(this T[] arr, int addSize)
+        {
+            Array.Resize(ref arr, arr.Length + addSize);
+            return arr;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using CreatureType = CreatureTemplate.Type;
+using static StaticWorld;
 
 namespace Fisobs.Creatures
 {
@@ -31,7 +32,7 @@ namespace Fisobs.Creatures
         /// <inheritdoc/>
         protected override void Initialize()
         {
-            On.RainWorld.Start += ApplyCustomCreaturesOnStart;
+            On.RainWorld.Start += ApplyCritobs;
             On.RainWorld.LoadResources += LoadResources;
 
             On.Player.Grabbed += PlayerGrabbed;
@@ -45,11 +46,12 @@ namespace Fisobs.Creatures
             On.CreatureSymbol.SpriteNameOfCreature += CreatureSymbol_SpriteNameOfCreature;
         }
 
-        private void ApplyCustomCreatures()
+        private void ApplyCritobs()
         {
             var newTemplates = new List<CreatureTemplate>();
 
-            // Get new critob templates
+            // --- Generate new critob templates ---
+
             foreach (Critob critob in critobs.Values) {
                 var templates = critob.GetTemplates()?.ToList() ?? throw new InvalidOperationException($"Critob \"{critob.Type}\" returned null in GetTemplates().");
 
@@ -57,57 +59,78 @@ namespace Fisobs.Creatures
                     throw new InvalidOperationException($"Critob \"{critob.Type}\" does not have a template for its type, \"CreatureTemplate.Type::{critob.Type}\".");
                 }
                 if (templates.FirstOrDefault(t => t.TopAncestor().type != critob.Type) is CreatureTemplate offender) {
-                    throw new InvalidOperationException($"The template with type \"{offender.type}\" from critob \"{critob.Type}\" must have an ancestor of type \"CreatureTemplate.Type::{critob.Type}\".");
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" requires an ancestor of type \"{critob.Type}\" for the template \"{offender.type}\".");
                 }
 
                 newTemplates.AddRange(templates);
             }
 
-            // Add new critob templates to StaticWorld.creatureTemplates
-            Array.Resize(ref StaticWorld.creatureTemplates, StaticWorld.creatureTemplates.Length + newTemplates.Count);
+            // --- Add new critob templates ---
 
-            foreach (CreatureTemplate extraTemplate in newTemplates) {
+            // Allocate space for the new templates
+            int prebakedIndex = preBakedPathingCreatures.Length;
+            int quantifyIndex = quantifiedCreatures.Length;
+
+            creatureTemplates = creatureTemplates.ExpandedBy(newTemplates.Count);
+            preBakedPathingCreatures = preBakedPathingCreatures.ExpandedBy(newTemplates.Count(t => t.doPreBakedPathing));
+            quantifiedCreatures = quantifiedCreatures.ExpandedBy(newTemplates.Count(t => t.quantified));
+
+            // Add the templates to their respective arrays in StaticWorld
+            foreach (CreatureTemplate newTemplate in newTemplates) {
                 // Make sure we're not overwriting vanilla or causing index-out-of-bound errors
-                if ((int)extraTemplate.type < 46) {
-                    throw new InvalidOperationException($"The CreatureTemplate.Type value {extraTemplate.type} ({(int)extraTemplate.type}) must be greater than 45 to not overwrite vanilla.");
+                if ((int)newTemplate.type <= 45) {
+                    throw new InvalidOperationException($"The CreatureTemplate.Type value {newTemplate.type} ({(int)newTemplate.type}) must be greater than 45 to not overwrite vanilla.");
                 }
-                if ((int)extraTemplate.type >= StaticWorld.creatureTemplates.Length) {
+                if ((int)newTemplate.type >= creatureTemplates.Length) {
                     throw new InvalidOperationException(
-                        $"The CreatureTemplate.Type value {extraTemplate.type} ({(int)extraTemplate.type}) must be less than StaticWorld.creatureTemplates.Length ({StaticWorld.creatureTemplates.Length}).");
+                        $"The CreatureTemplate.Type value {newTemplate.type} ({(int)newTemplate.type}) must be less than StaticWorld.creatureTemplates.Length ({creatureTemplates.Length}).");
                 }
-                StaticWorld.creatureTemplates[(int)extraTemplate.type] = extraTemplate;
+
+                // Add to StaticWorld collections
+                creatureTemplates[newTemplate.index = (int)newTemplate.type] = newTemplate;
+
+                if (newTemplate.doPreBakedPathing) {
+                    preBakedPathingCreatures[newTemplate.PreBakedPathingIndex = prebakedIndex] = newTemplate;
+                    prebakedIndex += 1;
+                }
+
+                if (newTemplate.quantified) {
+                    quantifiedCreatures[newTemplate.quantifiedIndex = quantifyIndex] = newTemplate;
+                    quantifyIndex += 1;
+                }
             }
 
-            // Avoid null refs at all costs here
-            int nullIndex = StaticWorld.creatureTemplates.IndexOf(null);
+            // Can't have nulls in this array
+            int nullIndex = newTemplates.IndexOf(null!);
             if (nullIndex != -1) {
                 throw new InvalidOperationException($"StaticWorld.creatureTemplates has a null value at index {nullIndex}.");
             }
 
-            // Add default relationship to existing creatures
-            foreach (CreatureTemplate template in StaticWorld.creatureTemplates) {
+            // --- Update creature-creature relationships ---
+
+            // Update existing vanilla relationships
+            foreach (CreatureTemplate template in creatureTemplates) {
                 int oldRelationshipsLength = template.relationships.Length;
-
-                Array.Resize(ref template.relationships, StaticWorld.creatureTemplates.Length);
-
-                for (int i = oldRelationshipsLength; i < StaticWorld.creatureTemplates.Length; i++) {
+                Array.Resize(ref template.relationships, creatureTemplates.Length);
+                for (int i = oldRelationshipsLength; i < creatureTemplates.Length; i++) {
                     template.relationships[i] = template.relationships[0];
                 }
             }
 
+            // Establish specific relationships
             foreach (Critob critob in critobs.Values) {
                 critob.EstablishRelationships();
             }
         }
 
-        private void ApplyCustomCreaturesOnStart(On.RainWorld.orig_Start orig, RainWorld self)
+        private void ApplyCritobs(On.RainWorld.orig_Start orig, RainWorld self)
         {
             orig(self);
             try {
-                ApplyCustomCreatures();
+                ApplyCritobs();
             } catch (Exception e) {
                 Debug.LogException(e);
-                Debug.LogError($"An exception was thrown in {nameof(Fisobs)}.{nameof(Creatures)}::{nameof(ApplyCustomCreatures)} with details logged.");
+                Debug.LogError($"An exception was thrown in {nameof(Fisobs)}.{nameof(Creatures)}::{nameof(ApplyCritobs)} with details logged.");
                 throw;
             }
         }
@@ -196,7 +219,7 @@ namespace Fisobs.Creatures
         private bool KillsMatter(On.CreatureSymbol.orig_DoesCreatureEarnATrophy orig, CreatureType creature)
         {
             var ret = orig(creature);
-            if (critobs.TryGetValue(StaticWorld.GetCreatureTemplate(creature).TopAncestor().type, out var critob)) {
+            if (critobs.TryGetValue(GetCreatureTemplate(creature).TopAncestor().type, out var critob)) {
                 critob.KillsMatter(creature, ref ret);
             }
             return ret;

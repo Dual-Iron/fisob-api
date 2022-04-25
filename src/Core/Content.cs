@@ -9,7 +9,7 @@ namespace Fisobs.Core
     public static class Content
     {
         /// <summary>
-        /// Registers the provided set of content.
+        /// Registers some content. Call this from your mod's entry point.
         /// </summary>
         /// <param name="content">A bunch of content. Currently, fisobs provides <see cref="Items.Fisob"/> and <see cref="Creatures.Critob"/> for content types.</param>
         public static void Register(params IContent[] content)
