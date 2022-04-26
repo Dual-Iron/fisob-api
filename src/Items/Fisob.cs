@@ -45,7 +45,7 @@ namespace Fisobs.Items
         /// <param name="rainWorld">The current <see cref="RainWorld"/> instance.</param>
         public virtual void LoadResources(RainWorld rainWorld)
         {
-            string iconName = Ext.LoadAtlasFromEmbRes(GetType().Assembly, $"icon_{Type}") ? $"icon_{Type}" : "Futile_White";
+            string iconName = Ext.LoadAtlasFromEmbRes(GetType().Assembly, $"icon_{Type}")?.name ?? "Futile_White";
 
             if (Icon is DefaultIcon) {
                 Icon = new SimpleIcon(iconName, Ext.MenuGrey);

@@ -78,13 +78,13 @@ namespace Fisobs.Core
         /// </summary>
         /// <param name="assembly">The assembly to get the resource from. Use <c>typeof(ThisType).Assembly</c> or <c>this.GetType()</c> to get this value.</param>
         /// <param name="resource">The name of the embedded resource.</param>
-        /// <returns>If the resource was successfully loaded, <see langword="true"/>; otherwise, <see langword="false"/>.</returns>
-        public static bool LoadAtlasFromEmbRes(Assembly assembly, string resource)
+        /// <returns>If the resource was successfully loaded, the atlas; otherwise, <see langword="null"/>.</returns>
+        public static FAtlas? LoadAtlasFromEmbRes(Assembly assembly, string resource)
         {
             using System.IO.Stream stream = assembly.GetManifestResourceStream(resource);
 
             if (stream == null) {
-                return false;
+                return null;
             }
 
             byte[] image = new byte[stream.Length];
@@ -95,9 +95,7 @@ namespace Fisobs.Core
 
             tex.LoadImage(image);
 
-            Futile.atlasManager.LoadAtlasFromTexture(resource, tex);
-
-            return true;
+            return Futile.atlasManager.LoadAtlasFromTexture(resource, tex);
         }
 
         internal static T[] ExpandedBy<T>(this T[] arr, int addSize)
