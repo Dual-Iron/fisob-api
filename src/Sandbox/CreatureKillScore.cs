@@ -13,8 +13,9 @@ namespace Fisobs.Sandbox
         public readonly int Value { get; }
 
         /// <summary>
-        /// If true, the score will be hidden from the sandbox menu.
+        /// If true, the score is hidden from the sandbox mode config.
         /// </summary>
+        /// <remarks>Leviathans, for example, do not have a configurable score, so they are hidden from the config.</remarks>
         public readonly bool Hidden { get; }
 
         /// <summary>
