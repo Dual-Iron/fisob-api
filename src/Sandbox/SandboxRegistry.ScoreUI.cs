@@ -2,6 +2,7 @@
 using Fisobs.Core;
 using Menu;
 using RWCustom;
+using System.Linq;
 using UnityEngine;
 using static Menu.SandboxSettingsInterface;
 
@@ -89,13 +90,10 @@ namespace Fisobs.Sandbox
             {
                 int rows = Rows;
 
-                for (int index = 0; index < owner.scoreControllers.Count; index++) {
-                    // Skip static slots (null, Food, Survive, and Spear hit)
-                    if (index > 31 && index < 35) {
-                        continue;
-                    }
+                int i = -1;
+                foreach (ScoreController score in owner.scoreControllers.Where(s => s is KillScore or LockedScore)) {
+                    i++;
 
-                    int i = index < 35 ? index : index - 3; // account for skipped slots
                     int x = i / rows;
                     int y = i % rows;
 
@@ -103,7 +101,6 @@ namespace Fisobs.Sandbox
                         continue;
                     }
 
-                    ScoreController score = owner.scoreControllers[index];
                     score.pos.x = x * xOffset;
                     score.pos.y = y * yOffset - rowSmoothed * yOffset;
 
@@ -116,8 +113,6 @@ namespace Fisobs.Sandbox
                     if (alpha < 0.99f) {
                         score.page.selectables.Remove(score.scoreDragger);
                     } else if (score.page.selectables.LastIndexOf(score.scoreDragger) == -1) {
-                        // LastIndexOf makes it search in reverse, which will be significantly faster since these
-                        // will tend to be towards the end of the selectables list.
                         score.page.selectables.Add(score.scoreDragger);
                     }
                 }

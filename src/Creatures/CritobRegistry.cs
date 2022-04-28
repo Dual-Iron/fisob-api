@@ -55,6 +55,9 @@ namespace Fisobs.Creatures
             foreach (Critob critob in critobs.Values) {
                 var templates = critob.GetTemplates()?.ToList() ?? throw new InvalidOperationException($"Critob \"{critob.Type}\" returned null in GetTemplates().");
 
+                if (templates.Contains(null!)) {
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned one or more null references from its GetTemplates() method.");
+                }
                 if (!templates.Any(t => t.type == critob.Type)) {
                     throw new InvalidOperationException($"Critob \"{critob.Type}\" does not have a template for its type, \"CreatureTemplate.Type::{critob.Type}\".");
                 }
@@ -68,12 +71,24 @@ namespace Fisobs.Creatures
             // --- Add new critob templates ---
 
             // Allocate space for the new templates
+            int maxType = newTemplates.Max(t => (int)t.type);
             int prebakedIndex = preBakedPathingCreatures.Length;
             int quantifyIndex = quantifiedCreatures.Length;
 
-            creatureTemplates = creatureTemplates.ExpandedBy(newTemplates.Count);
             preBakedPathingCreatures = preBakedPathingCreatures.ExpandedBy(newTemplates.Count(t => t.doPreBakedPathing));
             quantifiedCreatures = quantifiedCreatures.ExpandedBy(newTemplates.Count(t => t.quantified));
+
+            if (creatureTemplates.Length < maxType + 1) {
+                int oldLen = creatureTemplates.Length;
+
+                Array.Resize(ref creatureTemplates, maxType + 1);
+
+                for (int i = oldLen; i < maxType + 1; i++) {
+                    creatureTemplates[i] = new CreatureTemplate((CreatureType)i, null, new(), new(), default) {
+                        name = "unregistered template"
+                    };
+                }
+            }
 
             // Add the templates to their respective arrays in StaticWorld
             foreach (CreatureTemplate newTemplate in newTemplates) {
@@ -98,12 +113,6 @@ namespace Fisobs.Creatures
                     quantifiedCreatures[newTemplate.quantifiedIndex = quantifyIndex] = newTemplate;
                     quantifyIndex += 1;
                 }
-            }
-
-            // Can't have nulls in this array
-            int nullIndex = newTemplates.IndexOf(null!);
-            if (nullIndex != -1) {
-                throw new InvalidOperationException($"StaticWorld.creatureTemplates has a null value at index {nullIndex}.");
             }
 
             // --- Update creature-creature relationships ---

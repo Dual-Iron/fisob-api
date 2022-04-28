@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using Fisobs.Core;
 using Menu;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -38,7 +37,11 @@ namespace Fisobs.Sandbox
         private void AddPages(On.Menu.SandboxSettingsInterface.orig_ctor orig, SandboxSettingsInterface self, Menu.Menu menu, MenuObject owner)
         {
             orig(self, menu, owner);
+            AddPagesImpl(self, menu);
+        }
 
+        private void AddPagesImpl(SandboxSettingsInterface self, Menu.Menu menu)
+        {
             var unlocksToAdd = UnlocksToAdd();
             if (!unlocksToAdd.Any()) {
                 return;
