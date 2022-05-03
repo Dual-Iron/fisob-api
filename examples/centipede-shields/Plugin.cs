@@ -43,7 +43,7 @@ namespace CentiShields
             const float maxDistance = 8;
 
             if (obj is Creature grabbed && self is not DropBug) {
-                var grasp = grabbed.grasps.FirstOrDefault(g => g?.grabbed is CentiShield);
+                var grasp = grabbed.grasps?.FirstOrDefault(g => g?.grabbed is CentiShield);
                 if (grasp?.grabbed is CentiShield shield && self.bodyChunks.Any(b => Vector2.Distance(b.pos, shield.firstChunk.pos) - (b.rad + shield.firstChunk.rad) < maxDistance)) {
                     shield.AllGraspsLetGoOfThisObject(true);
                     shield.Forbid();
