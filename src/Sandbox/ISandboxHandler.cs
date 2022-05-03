@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using System.Collections.Generic;
 
 namespace Fisobs.Sandbox

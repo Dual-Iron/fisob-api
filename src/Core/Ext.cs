@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine;
 
@@ -96,12 +95,6 @@ namespace Fisobs.Core
             tex.LoadImage(image);
 
             return Futile.atlasManager.LoadAtlasFromTexture(resource, tex);
-        }
-
-        internal static T[] ExpandedBy<T>(this T[] arr, int addSize)
-        {
-            Array.Resize(ref arr, arr.Length + addSize);
-            return arr;
         }
     }
 }

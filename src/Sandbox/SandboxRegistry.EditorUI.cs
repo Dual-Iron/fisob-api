@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using Menu;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;

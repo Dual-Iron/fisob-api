@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +39,7 @@ namespace Fisobs.Creatures
             On.AbstractCreature.InitiateAI += InitiateAI;
             On.AbstractCreature.ctor += Ctor;
             On.CreatureSymbol.DoesCreatureEarnATrophy += KillsMatter;
+            On.MultiplayerUnlocks.FallBackCrit += ArenaFallback;
 
             On.CreatureSymbol.SymbolDataFromCreature += CreatureSymbol_SymbolDataFromCreature;
             On.CreatureSymbol.ColorOfCreature += CreatureSymbol_ColorOfCreature;
@@ -75,8 +75,8 @@ namespace Fisobs.Creatures
             int prebakedIndex = preBakedPathingCreatures.Length;
             int quantifyIndex = quantifiedCreatures.Length;
 
-            preBakedPathingCreatures = preBakedPathingCreatures.ExpandedBy(newTemplates.Count(t => t.doPreBakedPathing));
-            quantifiedCreatures = quantifiedCreatures.ExpandedBy(newTemplates.Count(t => t.quantified));
+            Array.Resize(ref preBakedPathingCreatures, preBakedPathingCreatures.Length + newTemplates.Count(t => t.doPreBakedPathing));
+            Array.Resize(ref quantifiedCreatures, quantifiedCreatures.Length + newTemplates.Count(t => t.quantified));
 
             if (creatureTemplates.Length < maxType + 1) {
                 int oldLen = creatureTemplates.Length;
@@ -232,6 +232,14 @@ namespace Fisobs.Creatures
                 critob.KillsMatter(creature, ref ret);
             }
             return ret;
+        }
+
+        private CreatureType? ArenaFallback(On.MultiplayerUnlocks.orig_FallBackCrit orig, CreatureType type)
+        {
+            if (critobs.TryGetValue(GetCreatureTemplate(type).TopAncestor().type, out var critob)) {
+                return critob.ArenaFallback(type);
+            }
+            return orig(type);
         }
 
         private IconSymbol.IconSymbolData CreatureSymbol_SymbolDataFromCreature(On.CreatureSymbol.orig_SymbolDataFromCreature orig, AbstractCreature creature)

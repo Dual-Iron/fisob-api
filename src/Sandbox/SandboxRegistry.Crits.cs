@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using Menu;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace Fisobs.Sandbox
     {
         private IEnumerable<SandboxUnlock> UnlocksToAdd()
         {
-            return sboxes.Values.Where(c => c.Type.IsCrit).SelectMany(c => c.SandboxUnlocks).Where(s => !s.KillScore.Hidden);
+            return sboxes.Values.Where(c => c.Type.IsCrit).SelectMany(c => c.SandboxUnlocks).Where(s => s.KillScore.IsConfigurable);
         }
 
         private void TryAddPaginator(SandboxSettingsInterface self)
@@ -54,9 +53,10 @@ namespace Fisobs.Sandbox
                     self.GetMultiplayerMenu.multiplayerUnlocks.SandboxItemUnlocked(unlock.Type)
                     ? new SandboxSettingsInterface.KillScore(menu, self, unlock.Type)
                     : new SandboxSettingsInterface.LockedScore(menu, self);
-
+                    
                 self.scoreControllers.Add(button);
                 self.subObjects.Add(button);
+                button.scoreDragger.UpdateScoreText();
                 button.pos = new(100000, 100000); // this will be calculated correctly in the paginator
             }
         }

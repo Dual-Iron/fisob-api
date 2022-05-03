@@ -1,9 +1,11 @@
-﻿#nullable enable
+﻿using static PlayerProgression;
 using UnityEngine;
 using System;
 using ArenaBehaviors;
 using System.Linq;
 using Fisobs.Core;
+using Fisobs.Saves;
+using System.Collections.Generic;
 
 namespace Fisobs.Sandbox
 {
@@ -44,9 +46,9 @@ namespace Fisobs.Sandbox
 
         private static void DoSpawn(SandboxGameSession self, SandboxEditor.PlacedIconData p, EntitySaveData data, ISandboxHandler handler)
         {
-            SandboxUnlock? unlock = handler.SandboxUnlocks.FirstOrDefault(u => u.Data == p.data.intData);
+            SandboxUnlock unlock = handler.SandboxUnlocks.FirstOrDefault(u => u.Data == p.data.intData);
 
-            if (unlock == null) {
+            if (!unlock.IsInitialized) {
                 Debug.LogError($"The fisob \"{handler.Type}\" had no sandbox unlocks where Data={p.data.intData}.");
                 return;
             }
@@ -64,17 +66,6 @@ namespace Fisobs.Sandbox
             }
         }
 
-        private bool IsUnlocked(On.MultiplayerUnlocks.orig_SandboxItemUnlocked orig, MultiplayerUnlocks self, MultiplayerUnlocks.SandboxUnlockID unlockID)
-        {
-            foreach (var common in sboxes.Values) {
-                var unlock = common.SandboxUnlocks.FirstOrDefault(s => s.Type == unlockID);
-                if (unlock != null) {
-                    return unlock.IsUnlocked(self);
-                }
-            }
-            return orig(self, unlockID);
-        }
-
         private IconSymbol.IconSymbolData FromUnlock(On.MultiplayerUnlocks.orig_SymbolDataForSandboxUnlock orig, MultiplayerUnlocks.SandboxUnlockID unlockID)
         {
             try {
@@ -82,7 +73,7 @@ namespace Fisobs.Sandbox
             } catch {
                 foreach (var common in sboxes.Values) {
                     var unlock = common.SandboxUnlocks.FirstOrDefault(u => u.Type == unlockID);
-                    if (unlock != null) {
+                    if (unlock.IsInitialized) {
                         return new(common.Type.CritType, common.Type.ObjectType, unlock.Data);
                     }
                 }
@@ -102,6 +93,63 @@ namespace Fisobs.Sandbox
                 }
             }
             return orig(data);
+        }
+
+        private MultiplayerUnlocks.SandboxUnlockID? GetParent(On.MultiplayerUnlocks.orig_ParentSandboxID orig, MultiplayerUnlocks.SandboxUnlockID unlockID)
+        {
+            foreach (var common in sboxes.Values) {
+                var unlock = common.SandboxUnlocks.FirstOrDefault(s => s.Type == unlockID);
+                if (unlock.IsInitialized) {
+                    return unlock.Parent;
+                }
+            }
+            return orig(unlockID);
+        }
+
+        private List<MultiplayerUnlocks.SandboxUnlockID> TiedSandboxIDs(On.MultiplayerUnlocks.orig_TiedSandboxIDs orig, MultiplayerUnlocks.SandboxUnlockID parent, bool includeParent)
+        {
+            var ret = orig(parent, includeParent);
+            int count = ret.Count;
+
+            foreach (object o in Enum.GetValues(typeof(MultiplayerUnlocks.SandboxUnlockID))) {
+                var id = (MultiplayerUnlocks.SandboxUnlockID)o;
+
+                if (MultiplayerUnlocks.ParentSandboxID(id) == parent) {
+                    ret.Add(id);
+                }
+            }
+
+            if (count == ret.Count) {
+                // If nothing changed, return the original list.
+                return ret;
+            } else {
+                // Otherwise, remove any duplicate elements, then return as usual.
+                return ret.Distinct().ToList();
+            }
+        }
+
+        private bool GetCollected(On.PlayerProgression.MiscProgressionData.orig_GetTokenCollected_SandboxUnlockID orig, MiscProgressionData self, MultiplayerUnlocks.SandboxUnlockID unlockID)
+        {
+            if (unlockID == MultiplayerUnlocks.SandboxUnlockID.Slugcat) {
+                return true;
+            }
+            if (sboxes.Values.Any(sbox => sbox.SandboxUnlocks.Any(u => u.Type == unlockID))) {
+                return FisobSave.CurrentSlot.Unlocked.Contains(unlockID.ToString());
+            }
+            return orig(self, unlockID);
+        }
+
+        private bool SetCollected(On.PlayerProgression.MiscProgressionData.orig_SetTokenCollected_SandboxUnlockID orig, MiscProgressionData self, MultiplayerUnlocks.SandboxUnlockID unlockID)
+        {
+            if (sboxes.Values.Any(sbox => sbox.SandboxUnlocks.Any(u => u.Type == unlockID))) {
+                bool alreadySet = FisobSave.CurrentSlot.Unlocked.Contains(unlockID.ToString());
+                if (alreadySet) {
+                    return false;
+                }
+                FisobSave.Unlock(unlockID.ToString());
+                return true;
+            }
+            return orig(self, unlockID);
         }
     }
 }

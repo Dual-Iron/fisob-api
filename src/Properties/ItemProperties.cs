@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace Fisobs.Properties
+﻿namespace Fisobs.Properties
 {
     /// <summary>
     /// Defines properties for custom item types, like how scavengers interact with the item and if players can grab it.

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Core;
+﻿using Fisobs.Core;
 using Menu;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -41,9 +40,12 @@ namespace Fisobs.Sandbox
             // Items + Creatures
             On.Menu.SandboxEditorSelector.ctor += ResetWidthAndHeight;
             On.SandboxGameSession.SpawnEntity += SpawnEntity;
-            On.MultiplayerUnlocks.SandboxItemUnlocked += IsUnlocked;
             On.MultiplayerUnlocks.SymbolDataForSandboxUnlock += FromUnlock;
             On.MultiplayerUnlocks.SandboxUnlockForSymbolData += FromSymbolData;
+            On.MultiplayerUnlocks.ParentSandboxID += GetParent;
+            On.MultiplayerUnlocks.TiedSandboxIDs += TiedSandboxIDs;
+            On.PlayerProgression.MiscProgressionData.GetTokenCollected_SandboxUnlockID += GetCollected;
+            On.PlayerProgression.MiscProgressionData.SetTokenCollected_SandboxUnlockID += SetCollected;
 
             // Creatures
             On.Menu.SandboxSettingsInterface.DefaultKillScores += DefaultKillScores;

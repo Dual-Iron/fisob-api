@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Properties;
+﻿using Fisobs.Properties;
 using Fisobs.Core;
 using Fisobs.Sandbox;
 using System.Collections.Generic;
@@ -55,9 +54,12 @@ namespace Fisobs.Items
         /// <summary>
         /// Registers a sandbox unlock under this fisob.
         /// </summary>
-        public void RegisterUnlock(SandboxUnlock unlock)
+        /// <param name="type">The sandbox unlock type.</param>
+        /// <param name="parent">The sandbox's parent unlock. If the parent type's token has been collected in story mode, then this item will be unlocked. To unconditionally unlock this item, set <paramref name="parent"/> to <see cref="MultiplayerUnlocks.SandboxUnlockID.Slugcat"/>.</param>
+        /// <param name="data">The sandbox unlock's data value. This takes the place of <see cref="Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.</param>
+        public void RegisterUnlock(MultiplayerUnlocks.SandboxUnlockID type, MultiplayerUnlocks.SandboxUnlockID? parent = null, int data = 0)
         {
-            sandboxUnlocks.Add(unlock);
+            sandboxUnlocks.Add(new(type, parent, data, default));
         }
 
         PhysobType IPropertyHandler.Type => Type;

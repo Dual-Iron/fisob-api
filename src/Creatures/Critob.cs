@@ -1,5 +1,4 @@
-﻿#nullable enable
-using Fisobs.Properties;
+﻿using Fisobs.Properties;
 using Fisobs.Core;
 using Fisobs.Sandbox;
 using System.Collections.Generic;
@@ -40,6 +39,9 @@ namespace Fisobs.Creatures
         public virtual bool GraspParalyzesPlayer(Creature.Grasp grasp) => false;
         /// <summary>Determines if <paramref name="type"/> should be displayed when listing kills in arena and hunter modes.</summary>
         public virtual void KillsMatter(CreatureType type, ref bool killsMatter) { }
+        /// <summary>If this creature would be spawned in arena mode but isn't unlocked yet, the creature returned by this method is spawned instead.</summary>
+        /// <returns>The creature to spawn, or <see langword="null"/> to spawn nothing.</returns>
+        public virtual CreatureType? ArenaFallback(CreatureType type) => null;
         /// <inheritdoc/>
         public virtual ItemProperties? Properties(PhysicalObject forObject) => null;
 
@@ -69,9 +71,13 @@ namespace Fisobs.Creatures
         /// <summary>
         /// Registers a sandbox unlock under this critob.
         /// </summary>
-        public void RegisterUnlock(SandboxUnlock unlock)
+        /// <param name="type">The sandbox unlock type.</param>
+        /// <param name="parent">The sandbox's parent unlock. If the parent type's token has been collected in story mode, then this item will be unlocked. To unconditionally unlock this item, set <paramref name="parent"/> to <see cref="MultiplayerUnlocks.SandboxUnlockID.Slugcat"/>.</param>
+        /// <param name="data">The sandbox unlock's data value. This takes the place of <see cref="Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.</param>
+        /// <param name="killScore">The creature unlock's kill score. This is ignored for items.</param>
+        public void RegisterUnlock(KillScore killScore, MultiplayerUnlocks.SandboxUnlockID type, MultiplayerUnlocks.SandboxUnlockID? parent = null, int data = 0)
         {
-            sandboxUnlocks.Add(unlock);
+            sandboxUnlocks.Add(new(type, parent, data, killScore));
         }
 
         PhysobType IPropertyHandler.Type => Type;

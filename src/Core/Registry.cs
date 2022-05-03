@@ -1,5 +1,4 @@
-﻿#nullable enable
-namespace Fisobs.Core
+﻿namespace Fisobs.Core
 {
     /// <summary>
     /// Registries hook into the vanilla game to simplify content creation.

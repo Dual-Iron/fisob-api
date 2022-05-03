@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 
 namespace Fisobs.Core
@@ -42,8 +41,8 @@ namespace Fisobs.Core
             CustomData = customData;
         }
 
-        // Catches stuff like `<`, `<cA`, `<cD`, `<abc` etc
-        static readonly Regex invalidCreatureData = new("<[^c]?[^B-C]?");
+        // Catches ASCII letters within <>s
+        static readonly Regex dataSeparator = new("<([a-zA-Z]+)>");
 
         /// <summary>
         /// Creates an instance of the <see cref="EntitySaveData"/> struct.
@@ -59,8 +58,10 @@ namespace Fisobs.Core
             }
 
             if (apo is AbstractCreature) {
-                if (invalidCreatureData.Match(customData) is Match m && m.Success) {
-                    throw new ArgumentException($"Creature data cannot contain certain patterns. The pattern \"{m}\" is disallowed.");
+                if (dataSeparator.Match(customData) is Match m && m.Success) {
+                    if (m.Groups[1].Value is not "cB" and not "cC") {
+                        throw new ArgumentException($"Creature data cannot contain the pattern \"{m}\". Use the patterns \"<cB>\" and \"<cC>\" for separating creature data.");
+                    }
                 }
             } else if (customData.IndexOf('<') != -1) {
                 throw new ArgumentException("Item data cannot contain the < character.");

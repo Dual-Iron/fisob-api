@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace Fisobs.Core
+﻿namespace Fisobs.Core
 {
     /// <summary>
     /// The type of an item (<see cref="AbstractPhysicalObject.AbstractObjectType"/>) or creature (<see cref="CreatureTemplate.Type"/>).

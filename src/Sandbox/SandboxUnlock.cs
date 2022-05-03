@@ -1,59 +1,49 @@
-﻿#nullable enable
+﻿using ID = MultiplayerUnlocks.SandboxUnlockID;
 
 namespace Fisobs.Sandbox
 {
     /// <summary>
     /// Represents a sandbox unlock.
     /// </summary>
-    public class SandboxUnlock
+    public struct SandboxUnlock
     {
-        /// <summary>
-        /// The sandbox unlock's data value. This takes the place of <see cref="Core.Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.
-        /// </summary>
-        public int Data { get; }
-
-        /// <summary>
-        /// The creature unlock's kill score. This is ignored for items.
-        /// </summary>
-        public CreatureKillScore KillScore { get; }
+        internal readonly bool IsInitialized;
 
         /// <summary>
         /// The sandbox unlock type.
         /// </summary>
-        public MultiplayerUnlocks.SandboxUnlockID Type { get; }
+        public readonly ID Type;
 
         /// <summary>
-        /// Creates a new <see cref="SandboxUnlock"/>.
+        /// The sandbox's parent unlock. If the parent type's token has been collected in story mode, then this item will be unlocked.
         /// </summary>
-        /// <param name="type">The sandbox unlock type.</param>
-        public SandboxUnlock(MultiplayerUnlocks.SandboxUnlockID type) : this(type, 0, new(0, true))
-        { }
+        /// <remarks>If this is set to <see cref="ID.Slugcat"/>, the item is unconditionally unlocked.</remarks>
+        public readonly ID? Parent;
 
         /// <summary>
-        /// Creates a new <see cref="SandboxUnlock"/>.
+        /// The sandbox unlock's data value. This takes the place of <see cref="Core.Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.
         /// </summary>
-        /// <param name="type">The sandbox unlock type.</param>
-        /// <param name="data">The sandbox unlock's data value. This takes the place of <see cref="Core.Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.</param>
-        public SandboxUnlock(MultiplayerUnlocks.SandboxUnlockID type, int data) : this(type, data, new(0, true))
-        { }
+        public readonly int Data;
 
         /// <summary>
-        /// Creates a new <see cref="SandboxUnlock"/>.
+        /// The creature unlock's kill score. This is ignored for items.
+        /// </summary>
+        public readonly KillScore KillScore;
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="SandboxUnlock"/> class.
         /// </summary>
         /// <param name="type">The sandbox unlock type.</param>
+        /// <param name="parent">The sandbox's parent unlock. If the parent type's token has been collected in story mode, then this item will be unlocked. To unconditionally unlock this item, set <paramref name="parent"/> to <see cref="ID.Slugcat"/>.</param>
         /// <param name="data">The sandbox unlock's data value. This takes the place of <see cref="Core.Icon.Data(AbstractPhysicalObject)"/> when spawning objects from sandbox mode.</param>
         /// <param name="killScore">The creature unlock's kill score. This is ignored for items.</param>
-        public SandboxUnlock(MultiplayerUnlocks.SandboxUnlockID type, int data, CreatureKillScore killScore)
+        public SandboxUnlock(ID type, ID? parent, int data, KillScore killScore)
         {
+            IsInitialized = true;
             Type = type;
+            Parent = parent;
             Data = data;
             KillScore = killScore;
         }
-
-        /// <summary>
-        /// Determines if the sandbox unlock is actually unlocked and can be used in sandbox mode.
-        /// </summary>
-        /// <remarks>Unless overridden, this always returns true.</remarks>
-        public virtual bool IsUnlocked(MultiplayerUnlocks unlocks) => true;
     }
 }

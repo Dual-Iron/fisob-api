@@ -3,6 +3,7 @@ using Fisobs.Creatures;
 using System.Collections.Generic;
 using static PathCost.Legality;
 using CreatureType = CreatureTemplate.Type;
+using Fisobs.Sandbox;
 
 namespace Mosquitoes
 {
@@ -10,7 +11,7 @@ namespace Mosquitoes
     {
         public MosquitoCritob() : base(EnumExt_Mosquito.Mosquito)
         {
-            RegisterUnlock(new(EnumExt_Mosquito.MosquitoUnlock, data: 0, killScore: new(score: 3, hidden: false)));
+            RegisterUnlock(KillScore.Configurable(defaultScore: 3), EnumExt_Mosquito.MosquitoUnlock, parent: MultiplayerUnlocks.SandboxUnlockID.BigNeedleWorm, data: 0);
         }
 
         public override IEnumerable<CreatureTemplate> GetTemplates()

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using CreatureType = CreatureTemplate.Type;
+﻿using CreatureType = CreatureTemplate.Type;
 
 namespace Fisobs.Creatures
 {

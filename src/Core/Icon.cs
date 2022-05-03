@@ -1,5 +1,4 @@
-﻿#nullable enable
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Fisobs.Core
 {

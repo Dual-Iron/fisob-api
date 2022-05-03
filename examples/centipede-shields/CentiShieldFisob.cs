@@ -19,8 +19,8 @@ namespace CentiShields
             // If you want a simple grayscale icon, you can omit the following line.
             Icon = new CentiShieldIcon();
 
-            RegisterUnlock(new(EnumExt_CentiShields.RedCentiShield, data: 0));
-            RegisterUnlock(new(EnumExt_CentiShields.OrangeCentiShield, data: 70));
+            RegisterUnlock(EnumExt_CentiShields.OrangeCentiShield, parent: MultiplayerUnlocks.SandboxUnlockID.BigCentipede, data: 70);
+            RegisterUnlock(EnumExt_CentiShields.RedCentiShield, parent: MultiplayerUnlocks.SandboxUnlockID.RedCentipede, data: 0);
         }
 
         public override AbstractPhysicalObject Parse(World world, EntitySaveData saveData, SandboxUnlock? unlock)
@@ -41,10 +41,10 @@ namespace CentiShields
             };
 
             // If this is coming from a sandbox unlock, the hue and size should depend on the data value (see CentiShieldIcon below).
-            if (unlock != null) {
-                result.hue = unlock.Data / 1000f;
+            if (unlock is SandboxUnlock u) {
+                result.hue = u.Data / 1000f;
 
-                if (unlock.Data == 0) {
+                if (u.Data == 0) {
                     result.scaleX += 0.2f;
                     result.scaleY += 0.2f;
                 }
