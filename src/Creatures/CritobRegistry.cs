@@ -21,17 +21,24 @@ namespace Fisobs.Creatures
         readonly Dictionary<CreatureType, Critob> critobs = new();
 
         /// <inheritdoc/>
-        protected override void Process(IContent entry)
+        protected override void Process(IList<IContent> entry)
         {
-            if (entry is Critob critob) {
+            foreach (Critob critob in entry.OfType<Critob>()) {
                 critobs[critob.Type] = critob;
+            }
+
+            try {
+                ApplyCritobs();
+            } catch (Exception e) {
+                Debug.LogException(e);
+                Debug.LogError($"An exception was thrown in {nameof(Fisobs)}.{nameof(Creatures)}::{nameof(ApplyCritobs)} with details logged.");
+                throw;
             }
         }
 
         /// <inheritdoc/>
         protected override void Initialize()
         {
-            On.RainWorld.Start += ApplyCritobs;
             On.RainWorld.LoadResources += LoadResources;
 
             On.Player.Grabbed += PlayerGrabbed;
@@ -48,6 +55,10 @@ namespace Fisobs.Creatures
 
         private void ApplyCritobs()
         {
+            if (critobs.Count == 0) {
+                return;
+            }
+
             var newTemplates = new List<CreatureTemplate>();
 
             // --- Generate new critob templates ---
@@ -129,18 +140,6 @@ namespace Fisobs.Creatures
             // Establish specific relationships
             foreach (Critob critob in critobs.Values) {
                 critob.EstablishRelationships();
-            }
-        }
-
-        private void ApplyCritobs(On.RainWorld.orig_Start orig, RainWorld self)
-        {
-            orig(self);
-            try {
-                ApplyCritobs();
-            } catch (Exception e) {
-                Debug.LogException(e);
-                Debug.LogError($"An exception was thrown in {nameof(Fisobs)}.{nameof(Creatures)}::{nameof(ApplyCritobs)} with details logged.");
-                throw;
             }
         }
 

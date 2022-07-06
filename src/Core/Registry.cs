@@ -1,4 +1,6 @@
-﻿namespace Fisobs.Core
+﻿using System.Collections.Generic;
+
+namespace Fisobs.Core
 {
     /// <summary>
     /// Registries hook into the vanilla game to simplify content creation.
@@ -11,19 +13,19 @@
         /// Processes some content. The registry must ignore content not relevant to it and should throw an exception if content is relevant but malformed.
         /// </summary>
         /// <param name="content">The content entry to process.</param>
-        protected abstract void Process(IContent content);
+        protected abstract void Process(IList<IContent> content);
 
-        internal void ProcessInternal(IContent content)
+        internal void ProcessInternal(IList<IContent> content)
         {
             Process(content);
         }
 
         /// <summary>
-        /// Should contain initialization logic. This is called right before <see cref="Process(IContent)"/> is called and should be used to apply things like MonoMod hooks.
+        /// Should contain initialization logic. This is called a maximum of once and before <see cref="Process(IContent)"/>. Should be used to apply things like MonoMod hooks.
         /// </summary>
         protected abstract void Initialize();
 
-        internal void InitInternal()
+        internal void InitializeInternal()
         {
             if (!applied) {
                 applied = true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fisobs.Core
 {
@@ -13,8 +14,24 @@ namespace Fisobs.Core
         /// <param name="content">A bunch of content. Currently, fisobs provides <see cref="Items.Fisob"/> and <see cref="Creatures.Critob"/> for content types.</param>
         public static void Register(params IContent[] content)
         {
+            if (UnityEngine.Object.FindObjectOfType<RainWorld>() is RainWorld r && r.processManager != null) {
+                TryRegister(content);
+            }
+            else {
+                On.RainWorld.hook_Start? hook = null;
+
+                On.RainWorld.Start += hook = (orig, self) => {
+                    TryRegister(content);
+                    orig(self);
+                    On.RainWorld.Start -= hook;
+                };
+            }
+        }
+
+        private static void TryRegister(IContent[] content)
+        {
             try {
-                RegisterInner(content);
+                DoRegister(content);
             } catch (Exception e) {
                 UnityEngine.Debug.LogException(e);
                 Console.WriteLine(e);
@@ -22,13 +39,23 @@ namespace Fisobs.Core
             }
         }
 
-        private static void RegisterInner(IContent[] entries)
+        private static void DoRegister(IContent[] entries)
         {
+            Dictionary<Registry, List<IContent>> registries = new();
+
             foreach (var entry in entries) {
                 foreach (var registry in entry.Registries()) {
-                    registry.InitInternal();
-                    registry.ProcessInternal(entry);
+                    if (registries.TryGetValue(registry, out List<IContent> list)) {
+                        list.Add(entry);
+                    } else {
+                        registries[registry] = new List<IContent> { entry };
+                    }
                 }
+            }
+
+            foreach (var reg in registries) {
+                reg.Key.InitializeInternal();
+                reg.Key.ProcessInternal(reg.Value);
             }
         }
     }

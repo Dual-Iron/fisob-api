@@ -1,6 +1,7 @@
 ﻿using Fisobs.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ObjectType = AbstractPhysicalObject.AbstractObjectType;
 
@@ -21,9 +22,9 @@ namespace Fisobs.Items
         private FisobRegistry() { }
 
         /// <inheritdoc/>
-        protected override void Process(IContent entry)
+        protected override void Process(IList<IContent> entry)
         {
-            if (entry is Fisob fisob) {
+            foreach (Fisob fisob in entry.OfType<Fisob>()) {
                 fisobs[fisob.Type] = fisob;
             }
         }

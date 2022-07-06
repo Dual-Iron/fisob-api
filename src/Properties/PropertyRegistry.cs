@@ -1,5 +1,6 @@
 ﻿using Fisobs.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Fisobs.Properties
 {
@@ -18,9 +19,9 @@ namespace Fisobs.Properties
         private PropertyRegistry() { }
 
         /// <inheritdoc/>
-        protected override void Process(IContent content)
+        protected override void Process(IList<IContent> content)
         {
-            if (content is IPropertyHandler common) {
+            foreach (IPropertyHandler common in content.OfType<IPropertyHandler>()) {
                 objs[common.Type] = common;
             }
         }

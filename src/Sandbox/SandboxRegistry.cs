@@ -7,6 +7,7 @@ using SandboxUnlockCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Fisobs.Sandbox
@@ -24,9 +25,9 @@ namespace Fisobs.Sandbox
         readonly Dictionary<PhysobType, ISandboxHandler> sboxes = new();
 
         /// <inheritdoc/>
-        protected override void Process(IContent content)
+        protected override void Process(IList<IContent> content)
         {
-            if (content is ISandboxHandler handler) {
+            foreach (ISandboxHandler handler in content.OfType<ISandboxHandler>()) {
                 sboxes[handler.Type] = handler;
             }
         }
@@ -34,8 +35,13 @@ namespace Fisobs.Sandbox
         /// <inheritdoc/>
         protected override void Initialize()
         {
-            // Special SBUC support
-            On.RainWorld.Start += LateHooks;
+            // SBUC needs special support for UI
+            try {
+                HookSbuc();
+            } catch (FileNotFoundException) {
+                IL.Menu.SandboxEditorSelector.ctor += il => AddCustomFisobs(il, false);
+                On.Menu.SandboxSettingsInterface.ctor += AddPages;
+            }
 
             // Items + Creatures
             On.Menu.SandboxEditorSelector.ctor += ResetWidthAndHeight;
@@ -49,19 +55,6 @@ namespace Fisobs.Sandbox
 
             // Creatures
             On.Menu.SandboxSettingsInterface.DefaultKillScores += DefaultKillScores;
-        }
-
-        private void LateHooks(On.RainWorld.orig_Start orig, RainWorld self)
-        {
-            // SBUC needs special support for UI
-            try {
-                HookSbuc();
-            } catch (FileNotFoundException) {
-                IL.Menu.SandboxEditorSelector.ctor += il => AddCustomFisobs(il, false);
-                On.Menu.SandboxSettingsInterface.ctor += AddPages;
-            }
-
-            orig(self);
         }
 
         private void HookSbuc()

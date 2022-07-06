@@ -58,6 +58,7 @@ namespace Fisobs.Creatures
         /// <summary>
         /// Used to load <see cref="FAtlas"/> and <see cref="FAtlasElement"/> sprites. The <see cref="Ext.LoadAtlasFromEmbRes(System.Reflection.Assembly, string)"/> is recommended for this.
         /// </summary>
+        /// <remarks>Will only be called if content is registered before <see cref="RainWorld.Start"/>.</remarks>
         /// <param name="rainWorld">The current <see cref="RainWorld"/> instance.</param>
         public virtual void LoadResources(RainWorld rainWorld)
         {
