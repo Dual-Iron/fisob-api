@@ -9,8 +9,6 @@ namespace CentiShields
 {
     sealed class CentiShieldFisob : Fisob
     {
-        private static readonly CentiShieldProperties properties = new();
-
         public CentiShieldFisob() : base(EnumExt_CentiShields.CentiShield)
         {
             // Fisobs auto-loads the `icon_CentiShield` embedded resource as a texture.
@@ -53,10 +51,12 @@ namespace CentiShields
             return result;
         }
 
+        private static readonly CentiShieldProperties properties = new();
+
         public override ItemProperties Properties(PhysicalObject forObject)
         {
-            // You could create a new instance of your ItemProperties class each time here like in the Mosquitoes example,
-            // but we don't need to, so we just return a static instance.
+            // If you need to use the forObject parameter, pass it to your ItemProperties class's constructor.
+            // The Mosquitoes example demonstrates this.
             return properties;
         }
     }
@@ -64,7 +64,7 @@ namespace CentiShields
     sealed class CentiShieldIcon : Icon
     {
         // Vanilla only gives you one int field to store all your custom data.
-        // In this case, that int field is used to store the shield's hue (scaled by 1000).
+        // Here, that int field is used to store the shield's hue, scaled by 1000.
         // So, 0 is red and 70 is orange.
         public override int Data(AbstractPhysicalObject apo)
         {

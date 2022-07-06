@@ -1,18 +1,10 @@
-﻿using Mono.Cecil;
-using RWCustom;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Fisobs.Saves
 {
     readonly partial struct FisobSave
     {
-        // By design, this entire struct must be mutable, so that any changes are reflected on disk immediately.
+        // By design, this entire struct must be immutable, so that any changes are reflected on disk immediately.
 
         private readonly Dictionary<string, FisobSaveSlot> slots;
         private static FisobSave current = ReadOrCreate();
