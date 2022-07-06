@@ -4,7 +4,7 @@ An API that streamlines adding new content to Rain World. Fisobs currently suppo
 Requires EnumExtender.
 
 # Usage
-Visit the [examples](examples) directory for examples of fisob-api.
+Visit the [examples](examples) directory for examples of fisob-api. Each of them has a `Plugin` class that shows how to properly configure your BepInPlugin and how to register content.
 
 # Setup
 To use Fisobs in your project:

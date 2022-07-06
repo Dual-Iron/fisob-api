@@ -1,7 +1,9 @@
 ﻿using Fisobs.Properties;
 using Fisobs.Core;
 using Fisobs.Sandbox;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using CreatureType = CreatureTemplate.Type;
 
 namespace Fisobs.Creatures
@@ -18,6 +20,13 @@ namespace Fisobs.Creatures
         /// </summary>
         protected Critob(CreatureType type)
         {
+            if (type == 0) {
+                ArgumentException e = new($"The {GetType().Name} critob's enum value was zero. Did you forget to add a BepInDependency attribute to your plugin class?", nameof(type));
+                Debug.LogException(e);
+                Console.WriteLine(e);
+                throw e;
+            }
+
             Type = type;
         }
 

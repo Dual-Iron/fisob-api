@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Fisobs.Core
 {
@@ -16,7 +17,7 @@ namespace Fisobs.Core
             try {
                 RegisterInner(content);
             } catch (Exception e) {
-                UnityEngine.Debug.LogException(e);
+                Debug.LogException(e);
                 Console.WriteLine(e);
                 throw;
             }
