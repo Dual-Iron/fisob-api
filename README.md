@@ -8,6 +8,6 @@ Visit the [examples](examples) directory for examples of fisob-api. Each of them
 
 # Setup
 To use Fisobs in your project:
-1. Download the latest Fisobs.dll copy from the [Releases](https://github.com/Dual-Iron/fisob-api/releases/latest) page.
-2. Reference that DLL file in your project.<sup>[?](https://docs.microsoft.com/en-us/visualstudio/ide/managing-references-in-a-project?view=vs-2022)</sup>
-3. Package the Fisobs.dll file with your mod when (if) you release it.
+1. Download the `Fisobs.dll` and `Fisobs.xml` files from the [Releases](https://github.com/Dual-Iron/fisob-api/releases/latest) page.
+2. Reference the library in your C# project.<sup>[?](https://docs.microsoft.com/en-us/visualstudio/ide/managing-references-in-a-project?view=vs-2022)</sup>
+3. When (if) you release your mod, package the `Fisobs.dll` file with it.
