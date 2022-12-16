@@ -11,6 +11,30 @@ namespace Fisobs.Creatures
     /// <summary>
     /// Represents the "metadata" for a custom creature.
     /// </summary>
+#pragma warning disable CS0618 // Type or member is obsolete
+    public abstract class Critob2 : Critob
+    {
+        /// <summary>
+        /// Creates a new <see cref="Critob"/> instance for the given <paramref name="type"/>.
+        /// </summary>
+        protected Critob2(CreatureType type) : base(type) { }
+
+        /// <summary>
+        /// Deprecated.
+        /// </summary>
+        public sealed override IEnumerable<CreatureTemplate> GetTemplates()
+        {
+            yield return GetTemplate();
+        }
+
+        /// <summary>Establishes the creature template for this critob. The <see cref="CreatureFormula"/> type is recommended for this.</summary>
+        public abstract CreatureTemplate GetTemplate();
+    }
+
+    /// <summary>
+    /// Represents the "metadata" for a custom creature.
+    /// </summary>
+    [Obsolete("Don't extend this class. Instead, extend Critob2.")]
     public abstract class Critob : IContent, IPropertyHandler, ISandboxHandler
     {
         private readonly List<SandboxUnlock> sandboxUnlocks = new();
@@ -21,7 +45,7 @@ namespace Fisobs.Creatures
         protected Critob(CreatureType type)
         {
             if (type == 0) {
-                ArgumentException e = new($"The {GetType().Name} critob's enum value was zero. Did you forget to add a BepInDependency attribute to your plugin class?", nameof(type));
+                ArgumentException e = new($"The {GetType().Name} critob's enum value was zero. Did the developer forget to add a BepInDependency attribute to their mod's plugin?", nameof(type));
                 Debug.LogException(e);
                 Console.WriteLine(e);
                 throw e;

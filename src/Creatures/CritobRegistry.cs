@@ -6,6 +6,7 @@ using UnityEngine;
 using CreatureType = CreatureTemplate.Type;
 using static StaticWorld;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace Fisobs.Creatures
 {
     /// <summary>
@@ -55,14 +56,19 @@ namespace Fisobs.Creatures
             foreach (Critob critob in critobs.Values) {
                 var templates = critob.GetTemplates()?.ToList() ?? throw new InvalidOperationException($"Critob \"{critob.Type}\" returned null in GetTemplates().");
 
+                if (templates.Count > 1) {
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned more than one creature template.");
+                }
+                if (templates.Count == 0) {
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned no creature templates.");
+                }
                 if (templates.Contains(null!)) {
-                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned one or more null references from its GetTemplates() method.");
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned null for its creature template.");
                 }
-                if (!templates.Any(t => t.type == critob.Type)) {
-                    throw new InvalidOperationException($"Critob \"{critob.Type}\" does not have a template for its type, \"CreatureTemplate.Type::{critob.Type}\".");
-                }
-                if (templates.FirstOrDefault(t => t.TopAncestor().type != critob.Type) is CreatureTemplate offender) {
-                    throw new InvalidOperationException($"Critob \"{critob.Type}\" requires an ancestor of type \"{critob.Type}\" for the template \"{offender.type}\".");
+
+                var template = templates[0];
+                if (template.type != critob.Type) {
+                    throw new InvalidOperationException($"Critob \"{critob.Type}\" returned a template with an incorrect `type` field.");
                 }
 
                 newTemplates.AddRange(templates);
@@ -85,7 +91,7 @@ namespace Fisobs.Creatures
 
                 for (int i = oldLen; i < maxType + 1; i++) {
                     creatureTemplates[i] = new CreatureTemplate((CreatureType)i, null, new(), new(), default) {
-                        name = "unregistered template"
+                        name = "Unregistered HyperCam 2"
                     };
                 }
             }
@@ -157,7 +163,7 @@ namespace Fisobs.Creatures
         {
             orig(self, g);
 
-            if (g?.grabber?.abstractCreature != null && critobs.TryGetValue(g.grabber.abstractCreature.creatureTemplate.TopAncestor().type, out var critob) && critob.GraspParalyzesPlayer(g)) {
+            if (g?.grabber?.abstractCreature != null && critobs.TryGetValue(g.grabber.abstractCreature.creatureTemplate.type, out var critob) && critob.GraspParalyzesPlayer(g)) {
                 self.dangerGraspTime = 0;
                 self.dangerGrasp = g;
             }
@@ -167,7 +173,7 @@ namespace Fisobs.Creatures
         {
             orig(self);
 
-            if (critobs.TryGetValue(self.creatureTemplate.TopAncestor().type, out var crit)) {
+            if (critobs.TryGetValue(self.creatureTemplate.type, out var crit)) {
                 if (self.abstractAI != null && self.creatureTemplate.AI) {
                     self.abstractAI.RealAI = crit.GetRealizedAI(self) ?? throw new InvalidOperationException($"{crit.GetType()}::GetRealizedAI returned null but template.AI was true!");
                 } else if (!self.creatureTemplate.AI && crit.GetRealizedAI(self) != null) {
@@ -178,7 +184,7 @@ namespace Fisobs.Creatures
 
         private void Realize(On.AbstractCreature.orig_Realize orig, AbstractCreature self)
         {
-            if (self.realizedCreature == null && critobs.TryGetValue(self.creatureTemplate.TopAncestor().type, out var crit)) {
+            if (self.realizedCreature == null && critobs.TryGetValue(self.creatureTemplate.type, out var crit)) {
                 self.realizedObject = crit.GetRealizedCreature(self) ?? throw new InvalidOperationException($"{crit.GetType()}::GetRealizedCreature returned null!");
 
                 self.InitiateAI();
@@ -200,7 +206,7 @@ namespace Fisobs.Creatures
         {
             orig(self, world, template, real, pos, id);
 
-            if (critobs.TryGetValue(template.TopAncestor().type, out var critob)) {
+            if (critobs.TryGetValue(template.type, out var critob)) {
                 // Set creature state
                 self.state = critob.GetState(self);
 
@@ -228,7 +234,7 @@ namespace Fisobs.Creatures
         private bool KillsMatter(On.CreatureSymbol.orig_DoesCreatureEarnATrophy orig, CreatureType creature)
         {
             var ret = orig(creature);
-            if (critobs.TryGetValue(GetCreatureTemplate(creature).TopAncestor().type, out var critob)) {
+            if (critobs.TryGetValue(GetCreatureTemplate(creature).type, out var critob)) {
                 critob.KillsMatter(creature, ref ret);
             }
             return ret;
@@ -236,7 +242,7 @@ namespace Fisobs.Creatures
 
         private CreatureType? ArenaFallback(On.MultiplayerUnlocks.orig_FallBackCrit orig, CreatureType type)
         {
-            if (critobs.TryGetValue(GetCreatureTemplate(type).TopAncestor().type, out var critob)) {
+            if (critobs.TryGetValue(GetCreatureTemplate(type).type, out var critob)) {
                 return critob.ArenaFallback(type);
             }
             return orig(type);
