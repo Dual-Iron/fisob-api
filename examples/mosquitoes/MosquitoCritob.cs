@@ -7,14 +7,14 @@ using Fisobs.Sandbox;
 
 namespace Mosquitoes
 {
-    sealed class MosquitoCritob : Critob
+    sealed class MosquitoCritob : Critob2
     {
         public MosquitoCritob() : base(EnumExt_Mosquito.Mosquito)
         {
             RegisterUnlock(KillScore.Configurable(defaultScore: 3), EnumExt_Mosquito.MosquitoUnlock, parent: MultiplayerUnlocks.SandboxUnlockID.BigNeedleWorm, data: 0);
         }
 
-        public override IEnumerable<CreatureTemplate> GetTemplates()
+        public override CreatureTemplate CreateTemplate()
         {
             // CreatureFormula does most of the ugly work for you when creating a new CreatureTemplate,
             // but you can construct a CreatureTemplate manually if you need to.
@@ -76,7 +76,7 @@ namespace Mosquitoes
             t.meatPoints = 3;
             t.dangerousToPlayer = 0.4f;
 
-            yield return t;
+            return t;
         }
 
         public override void EstablishRelationships()
