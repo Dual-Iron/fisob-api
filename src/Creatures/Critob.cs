@@ -8,6 +8,23 @@ using CreatureType = CreatureTemplate.Type;
 
 namespace Fisobs.Creatures
 {
+    /// <summary>Represents the "metadata" for a custom creature.</summary>
+    public abstract class Critob2 : Critob
+    {
+        /// <summary>Creates a new <see cref="Critob"/> instance for the given <paramref name="type"/>.</summary>
+        protected Critob2(CreatureType type) : base(type, internalOverload: true)
+        { }
+
+        /// <summary>Obsolete. Call <see cref="CreateTemplate"/> instead.</summary>
+        public sealed override IEnumerable<CreatureTemplate> GetTemplates()
+        {
+            yield return CreateTemplate();
+        }
+
+        /// <summary>Establishes the creature template for this critob. The <see cref="CreatureFormula"/> type is recommended for this.</summary>
+        public abstract CreatureTemplate CreateTemplate();
+    }
+
     /// <summary>
     /// Represents the "metadata" for a custom creature.
     /// </summary>
@@ -15,13 +32,11 @@ namespace Fisobs.Creatures
     {
         private readonly List<SandboxUnlock> sandboxUnlocks = new();
 
-        /// <summary>
-        /// Creates a new <see cref="Critob"/> instance for the given <paramref name="type"/>.
-        /// </summary>
-        protected Critob(CreatureType type)
+#pragma warning disable IDE0060 // Remove unused parameter
+        internal Critob(CreatureType type, bool internalOverload)
         {
             if (type == 0) {
-                ArgumentException e = new($"The {GetType().Name} critob's enum value was zero. Did you forget to add a BepInDependency attribute to your plugin class?", nameof(type));
+                ArgumentException e = new($"The {GetType().Name} critob's enum value was zero. Did the developer forget to add a BepInDependency attribute to their plugin class?", nameof(type));
                 Debug.LogException(e);
                 Console.WriteLine(e);
                 throw e;
@@ -29,6 +44,14 @@ namespace Fisobs.Creatures
 
             Type = type;
         }
+#pragma warning restore IDE0060 // Remove unused parameter
+
+        /// <summary>
+        /// Creates a new <see cref="Critob"/> instance for the given <paramref name="type"/>.
+        /// </summary>
+        [Obsolete("Do not extend Critob. Extend Critob2 instead.", error: false)]
+        protected Critob(CreatureType type) : this(type, internalOverload: true)
+        { }
 
         /// <summary>The critob's type.</summary>
         public CreatureType Type { get; }

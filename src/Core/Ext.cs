@@ -90,7 +90,10 @@ namespace Fisobs.Core
 
             stream.Read(image, 0, image.Length);
 
-            Texture2D tex = new(1, 1) { filterMode = FilterMode.Point };
+            Texture2D tex = new(1, 1, TextureFormat.ARGB32, false) {
+                filterMode = FilterMode.Point,
+                anisoLevel = 1
+            };
 
             tex.LoadImage(image);
 
