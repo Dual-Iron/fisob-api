@@ -49,7 +49,7 @@ namespace Fisobs.Creatures
         /// <summary>
         /// Creates a new <see cref="Critob"/> instance for the given <paramref name="type"/>.
         /// </summary>
-        [Obsolete("Do not extend Critob. Extend Critob2 instead.", true)]
+        [Obsolete("Do not extend Critob. Extend Critob2 instead.", error: false)]
         protected Critob(CreatureType type) : this(type, internalOverload: true)
         { }
 
