@@ -1,12 +1,15 @@
+# 301 Moved Permanently
+This repository is for Rain World v1.5. The updated version for Rain World v1.9 is available [here](https://github.com/Dual-Iron/fisobs#readme).
+
 # fisob-api
 A programming library that makes creating new Rain World content easier. Currently supports adding new items and creatures.
 
 Requires EnumExtender. Has several examples. Documentation is extensive. Bereft of copyright.
 
-# Usage
+## Usage
 Visit the [examples](examples) directory for examples of fisob-api. Each of them has a `Plugin` class that shows how to properly configure your BepInPlugin and how to register content.
 
-# Setup
+## Setup
 To use Fisobs in your project:
 1. Download the `Fisobs.dll` and `Fisobs.xml` files from the [Releases](https://github.com/Dual-Iron/fisob-api/releases/latest) page.
 2. Reference the library in your C# project.<sup>[?](https://docs.microsoft.com/en-us/visualstudio/ide/managing-references-in-a-project?view=vs-2022)</sup>
